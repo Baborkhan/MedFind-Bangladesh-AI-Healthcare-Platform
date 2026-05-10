@@ -1,0 +1,2155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="MedFind AI Assistant - Your intelligent health companion for Bangladesh. Get instant medical guidance.">
+<title>MedFind AI — Bangladesh Health Platform</title><link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Noto+Sans+Bengali:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   MEDFIND — ULTRA PREMIUM DESIGN SYSTEM
+═══════════════════════════════════════════════════ */
+:root {
+  /* Deep navy-purple medical palette */
+  --void:    #0d0f1a;
+  --abyss:   #0f1222;
+  --deep:    #111528;
+  --ink:     #151a30;
+  --surface: #1a2040;
+  --lift:    #1f2850;
+  --high:    #253060;
+
+  /* Signature cyan-aqua spectrum */
+  --arc:     #00d4ff;
+  --arc2:    #00b4d8;
+  --arc3:    #0096c7;
+  --arc4:    #0077b6;
+  --teal:    #00cfc8;
+  --mint:    #43ffb4;
+  --jade:    #22c55e;
+
+  /* Accent spectrum */
+  --coral:   #ff4d6d;
+  --amber:   #ffb703;
+  --violet:  #bd93f9;
+  --rose:    #ff85a1;
+
+  /* Text */
+  --t1: #f0f8ff;
+  --t2: #7fb5d5;
+  --t3: #3d6a8a;
+  --t4: #1e3f55;
+
+  /* Borders */
+  --b1: rgba(0,212,255,0.12);
+  --b2: rgba(0,212,255,0.22);
+  --b3: rgba(0,212,255,0.35);
+
+  /* Shadows & Glows */
+  --glow-arc:  0 0 60px rgba(0,212,255,0.15), 0 0 120px rgba(0,212,255,0.06);
+  --glow-sm:   0 0 20px rgba(0,212,255,0.2);
+  --glow-coral:0 0 40px rgba(255,77,109,0.2);
+  --shadow-deep: 0 40px 100px rgba(0,0,0,0.8), 0 20px 50px rgba(0,0,0,0.5);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; }
+
+body {
+  font-family: 'Bricolage Grotesque', 'Noto Sans Bengali', system-ui, sans-serif;
+  background: var(--void);
+  color: var(--t1);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════════
+   CINEMATIC BACKGROUND SYSTEM
+═══════════════════════════════════════════════════ */
+#bg {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden;
+  pointer-events: none;
+}
+
+/* Deep space gradient */
+#bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 100% 70% at 0% 0%,   rgba(80,60,220,0.13) 0%, transparent 55%),
+    radial-gradient(ellipse 80%  60% at 100% 100%,rgba(0,200,180,0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 60%  80% at 50%  50%, rgba(13,15,26,0.9) 0%, transparent 100%),
+    linear-gradient(160deg, #020508 0%, #040b12 40%, #020810 100%);
+}
+
+/* Animated grid */
+.bg-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,180,216,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,216,0.04) 1px, transparent 1px);
+  background-size: 52px 52px;
+  animation: gridDrift 30s linear infinite;
+}
+@keyframes gridDrift {
+  0%   { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(52px) translateY(52px); }
+}
+
+/* Floating orbs */
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(90px);
+  animation: orbFloat ease-in-out infinite;
+}
+.orb1 { width:500px;height:500px; top:-150px; left:-150px; background:radial-gradient(circle,rgba(100,80,255,0.10),transparent 70%); animation-duration:20s; }
+.orb2 { width:400px;height:400px; bottom:-100px; right:-100px; background:radial-gradient(circle,rgba(0,207,200,0.09),transparent 70%); animation-duration:25s; animation-delay:-8s; }
+.orb3 { width:300px;height:300px; top:40%; left:40%; background:radial-gradient(circle,rgba(80,120,255,0.06),transparent 70%); animation-duration:18s; animation-delay:-4s; }
+
+@keyframes orbFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%     { transform: translate(30px,-20px) scale(1.05); }
+  66%     { transform: translate(-20px,30px) scale(0.95); }
+}
+
+/* Scanline effect */
+.scanlines {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+}
+
+/* Particle canvas */
+#particles { position:absolute; inset:0; }
+
+/* ═══════════════════════════════════════════════════
+   WELCOME SCREEN — CINEMATIC ENTRY
+═══════════════════════════════════════════════════ */
+#welcome {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+
+.wc-outer {
+  position: relative;
+  max-width: 580px; width: 100%;
+}
+
+/* Animated border ring */
+.wc-ring {
+  position: absolute; inset: -2px;
+  border-radius: 34px;
+  background: conic-gradient(
+    from var(--angle, 0deg),
+    transparent 60%,
+    var(--arc) 80%,
+    var(--teal) 90%,
+    transparent 100%
+  );
+  animation: ringRotate 4s linear infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  padding: 2px;
+}
+@property --angle {
+  syntax: '<angle>'; initial-value: 0deg; inherits: false;
+}
+@keyframes ringRotate { to { --angle: 360deg; } }
+
+.wc {
+  position: relative; z-index: 1;
+  background: linear-gradient(145deg, rgba(15,34,53,0.95) 0%, rgba(6,16,24,0.98) 100%);
+  border: 1px solid var(--b1);
+  border-radius: 32px;
+  padding: 44px 40px 36px;
+  text-align: center;
+  backdrop-filter: blur(40px);
+  box-shadow: var(--shadow-deep), var(--glow-arc);
+  overflow: hidden;
+}
+
+/* Inner glow top */
+.wc::before {
+  content: '';
+  position: absolute; top: 0; left: 20%; right: 20%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--arc), var(--teal), transparent);
+  opacity: 0.8;
+}
+
+/* Shimmer sweep */
+.wc::after {
+  content: '';
+  position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0,212,255,0.025), transparent);
+  animation: shimmerSweep 6s ease-in-out infinite;
+}
+@keyframes shimmerSweep { 0%,40%{left:-100%} 100%{left:200%} }
+
+/* Logo */
+.wc-logo-wrap {
+  position: relative; width: 100px; height: 100px;
+  margin: 0 auto 24px;
+}
+.wc-logo-bg {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(var(--arc), var(--teal), var(--mint), var(--arc));
+  animation: logoSpin 8s linear infinite;
+  filter: blur(1px);
+}
+.wc-logo-inner {
+  position: absolute; inset: 3px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--ink), var(--surface));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 38px;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+}
+@keyframes logoSpin { to { transform: rotate(360deg); } }
+
+/* Pulse rings behind logo */
+.wc-logo-wrap::before,
+.wc-logo-wrap::after {
+  content: '';
+  position: absolute; inset: -15px; border-radius: 50%;
+  border: 1px solid rgba(0,212,255,0.2);
+  animation: logoRing 3s ease-out infinite;
+}
+.wc-logo-wrap::after { inset: -30px; animation-delay: 1.5s; }
+@keyframes logoRing {
+  0%   { transform: scale(0.8); opacity: 0.6; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+/* Badge */
+.wc-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(0,212,255,0.07);
+  border: 1px solid rgba(0,212,255,0.18);
+  border-radius: 24px; padding: 5px 14px;
+  font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+  color: var(--arc); margin-bottom: 14px;
+  text-transform: uppercase;
+  animation: badgePulse 3s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(0,212,255,0); }
+  50%     { box-shadow: 0 0 16px 2px rgba(0,212,255,0.1); }
+}
+.badge-dot { width:6px;height:6px;border-radius:50%;background:var(--arc);animation:blink 1.4s ease infinite; }
+@keyframes blink { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.3;transform:scale(0.7);} }
+
+/* Title */
+.wc-title {
+  font-size: 42px; font-weight: 800;
+  letter-spacing: -2px; line-height: 1;
+  margin-bottom: 8px;
+  animation: titleReveal 0.8s cubic-bezier(.22,.68,0,1.2) both;
+}
+@keyframes titleReveal {
+  from { opacity:0; transform: translateY(20px) scale(0.95); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
+}
+.wc-title .t-med  { color: var(--t1); }
+.wc-title .t-find {
+  background: linear-gradient(135deg, var(--arc), var(--teal), var(--mint));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.wc-sub {
+  font-size: 13px; color: var(--t3); line-height: 1.6;
+  margin-bottom: 28px;
+  animation: fadeUp 0.8s 0.2s both ease;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* Feature grid */
+.wc-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin-bottom: 22px;
+  animation: fadeUp 0.8s 0.35s both ease;
+}
+.wc-feat {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.055);
+  border-radius: 14px; padding: 13px 10px;
+  transition: all 0.3s cubic-bezier(.22,.68,0,1.2);
+  cursor: default;
+  position: relative; overflow: hidden;
+}
+.wc-feat::before {
+  content:'';
+  position:absolute; inset:0; border-radius:14px;
+  background: linear-gradient(135deg, rgba(0,212,255,0.06), transparent);
+  opacity:0; transition: opacity 0.3s;
+}
+.wc-feat:hover { transform:translateY(-3px) scale(1.02); border-color:var(--b2); }
+.wc-feat:hover::before { opacity:1; }
+.wf-em  { font-size:20px; margin-bottom:6px; display:block; }
+.wf-ttl { font-size:11px; font-weight:700; color:var(--t1); margin-bottom:2px; }
+.wf-dsc { font-size:10px; color:var(--t3); line-height:1.3; }
+
+/* Emergency */
+.wc-sos {
+  background: linear-gradient(135deg, rgba(255,77,109,0.09), rgba(255,77,109,0.04));
+  border: 1px solid rgba(255,77,109,0.2);
+  border-radius: 16px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  text-align: left; margin-bottom: 22px;
+  animation: fadeUp 0.8s 0.45s both ease;
+  position: relative; overflow: hidden;
+}
+.wc-sos::before {
+  content:'';
+  position:absolute; left:0; top:0; bottom:0; width:3px;
+  background: linear-gradient(180deg, var(--coral), transparent);
+  border-radius:3px;
+}
+.sos-ttl { font-size:13px; font-weight:800; color:var(--coral); margin-bottom:3px; }
+.sos-dsc { font-size:11px; color:rgba(255,133,161,0.8); line-height:1.5; }
+
+/* Lang buttons */
+.wc-langs {
+  display: flex; gap: 10px; margin-bottom: 18px;
+  animation: fadeUp 0.8s 0.55s both ease;
+}
+.wc-lang {
+  flex: 1; padding: 13px; border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  color: var(--t3); font-family: inherit;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.3s;
+  position: relative; overflow: hidden;
+}
+.wc-lang::before {
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(0,207,200,0.06));
+  opacity:0; transition: opacity 0.3s;
+}
+.wc-lang:hover, .wc-lang.on {
+  border-color: var(--b2); color: var(--arc);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0,212,255,0.15);
+}
+.wc-lang:hover::before, .wc-lang.on::before { opacity:1; }
+
+/* Start button */
+.wc-start {
+  width: 100%; padding: 17px;
+  background: linear-gradient(135deg, #0096c7, #00b4d8, #00cfc8);
+  background-size: 200% 200%;
+  border: none; border-radius: 16px; color: white;
+  font-family: inherit; font-size: 15px; font-weight: 800;
+  cursor: pointer; letter-spacing: 0.3px;
+  transition: all 0.3s; position: relative; overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,180,216,0.4);
+  animation: fadeUp 0.8s 0.65s both ease, btnGrad 4s ease infinite;
+}
+@keyframes btnGrad {
+  0%,100% { background-position: 0% 50%; }
+  50%     { background-position: 100% 50%; }
+}
+.wc-start::before {
+  content:'';
+  position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.5s;
+}
+.wc-start:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(0,180,216,0.5); }
+.wc-start:hover::before { left:100%; }
+
+.wc-dev {
+  font-size: 10.5px; color: var(--t4);
+  margin-top: 16px; line-height: 1.7;
+  animation: fadeUp 0.8s 0.75s both ease;
+}
+.wc-dev .hl { color: var(--arc); font-weight: 600; }
+
+/* ═══════════════════════════════════════════════════
+   MAIN APP
+═══════════════════════════════════════════════════ */
+#app {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 880px;
+  height: 100vh;
+  display: none; flex-direction: column;
+  background: linear-gradient(180deg, var(--ink) 0%, var(--abyss) 100%);
+  border-left: 1px solid var(--b1);
+  border-right: 1px solid var(--b1);
+  box-shadow: var(--shadow-deep);
+  overflow: hidden;
+}
+
+/* ── HEADER ─────────────────────────────────────── */
+.hdr {
+  flex-shrink: 0;
+  height: 64px;
+  background: linear-gradient(90deg, rgba(6,16,24,0.98), rgba(10,24,37,0.98));
+  border-bottom: 1px solid var(--b1);
+  padding: 0 20px;
+  display: flex; align-items: center; gap: 14px;
+  position: relative; overflow: hidden;
+}
+/* Top glow line */
+.hdr::before {
+  content:'';
+  position: absolute; top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, transparent 0%, var(--arc) 30%, var(--teal) 70%, transparent 100%);
+  opacity: 0.7;
+}
+/* Bottom separator glow */
+.hdr::after {
+  content:'';
+  position: absolute; bottom:0; left:10%; right:10%; height:1px;
+  background: linear-gradient(90deg, transparent, rgba(0,212,255,0.15), transparent);
+}
+
+/* Animated logo */
+.hdr-logo {
+  width: 42px; height: 42px; border-radius: 13px; flex-shrink:0;
+  position: relative; overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,180,216,0.3);
+}
+.hdr-logo-bg {
+  position: absolute; inset:0;
+  background: linear-gradient(135deg, var(--arc3), var(--teal));
+  animation: logoShift 4s ease-in-out infinite alternate;
+}
+@keyframes logoShift {
+  from { background: linear-gradient(135deg, var(--arc3), var(--teal)); }
+  to   { background: linear-gradient(135deg, var(--teal), var(--arc)); }
+}
+.hdr-logo span { position:relative;z-index:1;font-size:19px;display:flex;align-items:center;justify-content:center;height:100%; }
+
+.hdr-brand { flex:1; }
+.hdr-name {
+  font-size: 18px; font-weight: 800; letter-spacing:-0.6px;
+  display:flex; align-items:center; gap:3px;
+}
+.hdr-name .m { color:var(--t1); }
+.hdr-name .f {
+  background: linear-gradient(135deg, var(--arc), var(--teal));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.hdr-tag {
+  font-size: 9px; font-weight:800; letter-spacing:0.8px;
+  background: linear-gradient(135deg, var(--arc3), var(--teal));
+  color:white; padding:2px 7px; border-radius:6px; margin-left:6px;
+  -webkit-text-fill-color: white;
+}
+.hdr-sub { font-size:10.5px; color:var(--t3); margin-top:1px; }
+
+.hdr-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+
+/* Status pills */
+.spill {
+  display:flex; align-items:center; gap:4px;
+  padding:4px 10px; border-radius:20px;
+  font-size:10px; font-weight:700; letter-spacing:0.3px;
+  position:relative; overflow:hidden;
+}
+.spill::before {
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04), transparent);
+}
+.sp-live { background:rgba(67,255,180,0.08); border:1px solid rgba(67,255,180,0.22); color:var(--mint); }
+.sp-ai   { background:rgba(189,147,249,0.08); border:1px solid rgba(189,147,249,0.2); color:var(--violet); }
+.sp-web  { background:rgba(0,212,255,0.07); border:1px solid rgba(0,212,255,0.18); color:var(--arc); }
+.live-dot { width:5px;height:5px;border-radius:50%;background:var(--mint);animation:blink 1.5s ease infinite; }
+
+/* Lang toggle */
+.ltog {
+  display:flex; gap:0;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:22px; overflow:hidden;
+}
+.lt {
+  padding:5px 12px; font-size:11px; font-weight:700;
+  font-family:inherit; border:none; background:transparent;
+  color:var(--t3); cursor:pointer; transition:all 0.25s;
+}
+.lt.on {
+  background: linear-gradient(135deg, var(--arc3), var(--arc2));
+  color:white; box-shadow: 0 2px 10px rgba(0,150,199,0.3);
+}
+
+/* ── TABS ────────────────────────────────────────── */
+.tabs {
+  flex-shrink:0;
+  background: rgba(6,16,24,0.85);
+  border-bottom: 1px solid rgba(0,212,255,0.06);
+  display:flex; padding:0 16px;
+  overflow-x:auto; scrollbar-width:none;
+  backdrop-filter: blur(20px);
+}
+.tabs::-webkit-scrollbar { display:none; }
+
+.tab {
+  flex-shrink:0; padding:11px 14px;
+  font-size:11.5px; font-weight:700; letter-spacing:0.2px;
+  color:var(--t3); border:none; background:transparent;
+  font-family:inherit; cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:all 0.25s; white-space:nowrap;
+  display:flex; align-items:center; gap:5px;
+  position:relative;
+}
+.tab::after {
+  content:'';
+  position:absolute; bottom:0; left:50%; right:50%;
+  height:2px; background:var(--arc);
+  transition:all 0.25s; border-radius:2px;
+}
+.tab:hover { color:var(--t2); }
+.tab:hover::after { left:20%; right:20%; }
+.tab.on { color:var(--arc); }
+.tab.on::after { left:0; right:0; }
+
+/* ── QUICKBAR ────────────────────────────────────── */
+#qbar {
+  flex-shrink:0;
+  background: rgba(4,11,18,0.7);
+  border-bottom:1px solid rgba(0,212,255,0.04);
+  padding:7px 14px;
+  display:flex; gap:7px; overflow-x:auto; scrollbar-width:none;
+  backdrop-filter:blur(10px);
+}
+#qbar::-webkit-scrollbar { display:none; }
+
+.qb {
+  flex-shrink:0;
+  background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.1);
+  border-radius:22px; padding:5px 13px;
+  color:var(--t3); font-size:11px; font-weight:600;
+  font-family:inherit; cursor:pointer; white-space:nowrap;
+  display:flex; align-items:center; gap:5px;
+  transition:all 0.25s;
+  position:relative; overflow:hidden;
+}
+.qb::before {
+  content:'';
+  position:absolute; inset:0; border-radius:22px;
+  background:linear-gradient(135deg, rgba(0,212,255,0.12), rgba(0,207,200,0.06));
+  opacity:0; transition:opacity 0.25s;
+}
+.qb:hover { border-color:var(--b2); color:var(--arc); transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,212,255,0.12); }
+.qb:hover::before { opacity:1; }
+.qb:active { transform:translateY(0); }
+.qb.qem  { border-color:rgba(255,77,109,0.18); color:rgba(255,133,161,0.8); }
+.qb.qem:hover { background:rgba(255,77,109,0.08); border-color:rgba(255,77,109,0.35); color:var(--rose); box-shadow:0 4px 14px rgba(255,77,109,0.12); }
+
+/* ── PANELS ──────────────────────────────────────── */
+.panel { display:none; flex:1; overflow:hidden; flex-direction:column; }
+.panel.on { display:flex; }
+
+/* ── CHAT MESSAGES ───────────────────────────────── */
+#msgs {
+  flex:1; overflow-y:auto; padding:20px 16px 10px;
+  display:flex; flex-direction:column;
+  scroll-behavior:smooth;
+}
+#msgs::-webkit-scrollbar { width:3px; }
+#msgs::-webkit-scrollbar-thumb { background:rgba(0,212,255,0.15); border-radius:3px; }
+
+.mrow {
+  display:flex; gap:10px; align-items:flex-start;
+  margin-bottom:18px;
+  animation: msgReveal 0.4s cubic-bezier(.22,.68,0,1.2) both;
+}
+.mrow.me { flex-direction:row-reverse; }
+
+@keyframes msgReveal {
+  from { opacity:0; transform:translateY(14px) scale(0.96); }
+  to   { opacity:1; transform:translateY(0)    scale(1); }
+}
+
+.av {
+  width:34px; height:34px; border-radius:50%; flex-shrink:0; margin-top:3px;
+  display:flex; align-items:center; justify-content:center; font-size:15px;
+  position:relative;
+}
+.av.bot {
+  background: conic-gradient(var(--arc2), var(--teal), var(--arc2));
+  animation: avSpin 6s linear infinite;
+  box-shadow: 0 0 20px rgba(0,180,216,0.3);
+}
+.av.bot::before {
+  content:'🏥';
+  position:absolute; inset:2px; border-radius:50%;
+  background:var(--ink); display:flex; align-items:center; justify-content:center;
+  font-size:14px;
+}
+@keyframes avSpin { to { transform:rotate(360deg); } }
+.av.me {
+  background: linear-gradient(135deg, #5b4fcf, #8b5cf6);
+  box-shadow: 0 0 16px rgba(139,92,246,0.25);
+}
+
+.mbody { max-width:80%; display:flex; flex-direction:column; gap:5px; }
+
+.bubble {
+  padding:13px 17px; font-size:13.5px; line-height:1.8;
+  word-break:break-word; white-space:pre-wrap;
+  position:relative; overflow:hidden;
+}
+.bubble.bot {
+  background: linear-gradient(145deg, rgba(21,45,71,0.8), rgba(15,34,53,0.9));
+  border:1px solid rgba(0,212,255,0.1);
+  border-radius:4px 20px 20px 20px;
+  color:var(--t1);
+  backdrop-filter:blur(10px);
+}
+.bubble.bot::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(0,212,255,0.2), transparent);
+}
+.bubble.me {
+  background: linear-gradient(135deg, #0077b6, #0096c7, #00b4d8);
+  border-radius:20px 4px 20px 20px;
+  color:white;
+  box-shadow:0 6px 20px rgba(0,150,199,0.3);
+}
+.bubble.me::before {
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(255,255,255,0.08), transparent);
+  border-radius:inherit;
+}
+
+/* Emergency card */
+.emg-card {
+  background:linear-gradient(135deg, rgba(255,77,109,0.12), rgba(255,77,109,0.05));
+  border:1px solid rgba(255,77,109,0.3);
+  border-radius:14px; padding:12px 16px;
+  margin-bottom:8px;
+  display:flex; align-items:center; gap:10px;
+  font-size:12.5px; font-weight:700; color:var(--rose);
+  animation:emergPulse 1.2s ease-in-out infinite;
+  position:relative; overflow:hidden;
+}
+.emg-card::before {
+  content:'';
+  position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:var(--coral); border-radius:3px;
+}
+@keyframes emergPulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(255,77,109,0.2);}
+  50%{box-shadow:0 0 20px 4px rgba(255,77,109,0.08);}
+}
+
+/* Typing */
+#typing {
+  display:none; gap:10px; margin-bottom:18px; align-items:center;
+}
+.tbub {
+  background:linear-gradient(145deg,rgba(21,45,71,0.8),rgba(15,34,53,0.9));
+  border:1px solid rgba(0,212,255,0.1);
+  border-radius:4px 20px 20px 20px;
+  padding:13px 18px;
+  display:flex; flex-direction:column; gap:6px;
+}
+.tdots { display:flex; gap:5px; align-items:center; }
+.td {
+  width:7px; height:7px; border-radius:50%;
+  animation:tdUp 1.3s ease-in-out infinite;
+}
+.td:nth-child(1){background:var(--arc); animation-delay:0s;}
+.td:nth-child(2){background:var(--teal);animation-delay:0.18s;}
+.td:nth-child(3){background:var(--mint);animation-delay:0.36s;}
+@keyframes tdUp {
+  0%,80%,100%{transform:translateY(0)scale(1);opacity:0.4;}
+  40%{transform:translateY(-8px)scale(1.1);opacity:1;}
+}
+.tlbl {
+  font-size:10px; color:var(--arc);
+  font-family:'DM Mono',monospace; letter-spacing:0.5px;
+}
+
+/* ── INPUT AREA ──────────────────────────────────── */
+.inzone {
+  flex-shrink:0;
+  background: linear-gradient(180deg, rgba(15,34,53,0.9) 0%, rgba(6,16,24,0.98) 100%);
+  border-top:1px solid rgba(0,212,255,0.1);
+  padding:12px 16px 14px;
+  backdrop-filter:blur(20px);
+}
+
+.inrow { display:flex; gap:9px; align-items:flex-end; }
+.inwrap { flex:1; position:relative; }
+
+#inp {
+  width:100%;
+  background:rgba(0,212,255,0.04);
+  border:1px solid rgba(0,212,255,0.1);
+  border-radius:16px; padding:12px 16px;
+  color:var(--t1); font-size:13.5px; font-family:inherit;
+  resize:none; line-height:1.5; min-height:48px; max-height:120px;
+  transition:all 0.3s;
+}
+#inp:focus {
+  outline:none;
+  border-color:rgba(0,212,255,0.35);
+  background:rgba(0,212,255,0.06);
+  box-shadow:0 0 0 4px rgba(0,212,255,0.04), inset 0 1px 0 rgba(0,212,255,0.05);
+}
+#inp::placeholder { color:var(--t3); }
+
+#sendbtn {
+  width:48px; height:48px; flex-shrink:0;
+  background:linear-gradient(135deg, #0077b6, #00b4d8);
+  border:none; border-radius:15px; color:white; font-size:18px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all 0.3s;
+  box-shadow:0 6px 20px rgba(0,150,199,0.35);
+  position:relative; overflow:hidden;
+}
+#sendbtn::before {
+  content:'';
+  position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
+  transition:left 0.4s;
+}
+#sendbtn:hover { transform:scale(1.08); box-shadow:0 8px 28px rgba(0,150,199,0.5); }
+#sendbtn:hover::before { left:100%; }
+#sendbtn:disabled { background:rgba(0,150,199,0.18); box-shadow:none; transform:none; cursor:not-allowed; }
+
+.tbar { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; align-items:center; }
+.tbtn {
+  background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
+  border-radius:10px; padding:5px 12px;
+  font-size:11px; font-weight:600; color:var(--t3);
+  font-family:inherit; cursor:pointer; transition:all 0.25s;
+  display:flex; align-items:center; gap:4px;
+}
+.tbtn:hover { background:rgba(0,212,255,0.07); color:var(--arc); border-color:var(--b1); }
+.tbtn.red { border-color:rgba(255,77,109,0.15); color:rgba(255,133,161,0.7); }
+.tbtn.red:hover { background:rgba(255,77,109,0.08); color:var(--rose); border-color:rgba(255,77,109,0.3); }
+
+.finf {
+  font-size:10px; color:var(--t4); text-align:center; margin-top:8px; line-height:1.6;
+}
+.finf .r { color:var(--coral); font-weight:700; }
+.finf .c { color:var(--arc); }
+
+/* ── SYMPTOM PANEL ───────────────────────────────── */
+.pnl-scrl {
+  padding:14px; overflow-y:auto; flex:1;
+  flex-direction:column; gap:12px;
+}
+.pnl-scrl::-webkit-scrollbar { width:3px; }
+.pnl-scrl::-webkit-scrollbar-thumb { background:rgba(0,212,255,0.15); border-radius:3px; }
+
+.phdr {
+  font-size:13px; font-weight:700; color:var(--t2);
+  padding-bottom:10px; border-bottom:1px solid rgba(0,212,255,0.08);
+  display:flex; align-items:center; gap:7px; margin-bottom:4px;
+}
+
+.sgrid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:12px;
+}
+.schip {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  padding:11px 7px; border-radius:13px; cursor:pointer;
+  background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.05);
+  font-size:11px; font-weight:600; color:var(--t3);
+  font-family:inherit; transition:all 0.25s; text-align:center;
+  position:relative; overflow:hidden;
+}
+.schip span { font-size:20px; }
+.schip::before {
+  content:'';
+  position:absolute; inset:0; border-radius:13px;
+  background:linear-gradient(135deg, rgba(0,212,255,0.08), rgba(0,207,200,0.04));
+  opacity:0; transition:opacity 0.25s;
+}
+.schip:hover, .schip.on { border-color:var(--b2); color:var(--arc); transform:translateY(-2px); }
+.schip:hover::before, .schip.on::before { opacity:1; }
+.schip.on { border-color:var(--arc2); box-shadow:0 4px 14px rgba(0,180,216,0.1); }
+
+.selbar {
+  background:rgba(0,212,255,0.04); border:1px solid var(--b1);
+  border-radius:12px; padding:9px 13px;
+  display:flex; flex-wrap:wrap; gap:6px; align-items:center; min-height:42px;
+  margin-bottom:10px;
+}
+.stag {
+  background:rgba(0,212,255,0.1); border:1px solid rgba(0,212,255,0.22);
+  border-radius:16px; padding:3px 10px;
+  font-size:11.5px; color:var(--arc);
+  display:flex; align-items:center; gap:5px;
+  animation:tagIn 0.2s ease;
+}
+@keyframes tagIn { from{opacity:0;transform:scale(0.8)} to{opacity:1;transform:scale(1)} }
+.srm { cursor:pointer; color:var(--t3); font-size:10px; transition:color 0.15s; }
+.srm:hover { color:var(--coral); }
+
+.abtn {
+  width:100%; padding:15px; border-radius:14px; cursor:pointer;
+  background:linear-gradient(135deg, #0077b6, #00b4d8, #00cfc8);
+  background-size:200% 200%; animation:btnGrad 4s ease infinite;
+  border:none; color:white; font-family:inherit;
+  font-size:14px; font-weight:800; transition:all 0.3s;
+  box-shadow:0 6px 22px rgba(0,150,199,0.35);
+  margin-bottom:12px; position:relative; overflow:hidden;
+}
+.abtn::before {
+  content:'';
+  position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+  transition:left 0.5s;
+}
+.abtn:hover { transform:translateY(-2px); box-shadow:0 10px 32px rgba(0,150,199,0.5); }
+.abtn:hover::before { left:100%; }
+.abtn:disabled { background:rgba(0,150,199,0.18); box-shadow:none; transform:none; cursor:not-allowed; }
+
+.rcard {
+  background:linear-gradient(145deg, rgba(21,45,71,0.6), rgba(15,34,53,0.8));
+  border:1px solid var(--b1); border-radius:16px; padding:18px;
+  backdrop-filter:blur(10px);
+}
+.rtitle { font-size:10.5px; font-weight:800; color:var(--arc); letter-spacing:1px; text-transform:uppercase; margin-bottom:14px; }
+.crow {
+  display:flex; align-items:center; gap:10px; padding:8px 11px;
+  background:rgba(255,255,255,0.02); border-radius:9px; border:1px solid rgba(255,255,255,0.04);
+  margin-bottom:6px; transition:all 0.3s;
+}
+.crow:hover { background:rgba(0,212,255,0.04); border-color:var(--b1); }
+.cbg { flex:1; height:5px; background:rgba(255,255,255,0.05); border-radius:5px; overflow:hidden; }
+.cfill { height:100%; border-radius:5px; transition:width 1.2s cubic-bezier(.22,.68,0,1.2); position:relative; }
+.cfill::after {
+  content:'';
+  position:absolute; top:0; right:0; bottom:0; width:12px;
+  background:rgba(255,255,255,0.3); border-radius:5px;
+  filter:blur(3px);
+}
+.cnm { font-size:12.5px; min-width:130px; }
+.cpct { font-size:11px; font-family:'DM Mono',monospace; color:var(--arc); min-width:34px; text-align:right; }
+
+/* urgency badge */
+.ubadge {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:10.5px; font-weight:800; letter-spacing:0.4px;
+  padding:4px 11px; border-radius:20px;
+}
+.ue{background:rgba(255,77,109,0.12);color:var(--rose);border:1px solid rgba(255,77,109,0.3);animation:emergPulse 1s ease infinite;}
+.uu{background:rgba(255,183,3,0.1);color:var(--amber);border:1px solid rgba(255,183,3,0.28);}
+.um{background:rgba(255,183,3,0.07);color:#fde68a;border:1px solid rgba(255,183,3,0.2);}
+.us{background:rgba(34,197,94,0.09);color:var(--jade);border:1px solid rgba(34,197,94,0.25);}
+
+/* ── DOCTOR CARDS ────────────────────────────────── */
+.dcard {
+  background:linear-gradient(145deg, rgba(21,45,71,0.5), rgba(15,34,53,0.7));
+  border:1px solid rgba(0,212,255,0.08);
+  border-radius:16px; padding:15px;
+  display:flex; gap:12px; align-items:flex-start;
+  transition:all 0.3s; cursor:default;
+  margin-bottom:9px; position:relative; overflow:hidden;
+}
+.dcard::before {
+  content:'';
+  position:absolute; left:0; top:0; bottom:0; width:2px;
+  background:linear-gradient(180deg, var(--arc2), transparent);
+  opacity:0; transition:opacity 0.3s;
+}
+.dcard:hover { background:linear-gradient(145deg, rgba(21,45,71,0.8),rgba(15,34,53,0.95)); border-color:var(--b2); transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,0.4), 0 0 20px rgba(0,180,216,0.05); }
+.dcard:hover::before { opacity:1; }
+
+.dav {
+  width:48px; height:48px; border-radius:13px; flex-shrink:0;
+  background:linear-gradient(135deg, var(--arc3), var(--teal));
+  display:flex; align-items:center; justify-content:center; font-size:22px;
+  box-shadow:0 4px 14px rgba(0,150,199,0.25);
+}
+.dnm { font-size:14px; font-weight:800; color:var(--t1); }
+.dsp { font-size:11.5px; color:var(--arc); font-weight:700; margin:2px 0; }
+.dmeta { font-size:11px; color:var(--t3); display:flex; gap:9px; align-items:center; margin-top:5px; flex-wrap:wrap; }
+.dtgs { display:flex; gap:5px; flex-wrap:wrap; margin-top:7px; }
+.dtg {
+  font-size:10px; padding:3px 9px; border-radius:12px;
+  background:rgba(0,212,255,0.06); border:1px solid rgba(0,212,255,0.12); color:var(--arc);
+  transition:all 0.2s;
+}
+.dtg:hover { background:rgba(0,212,255,0.12); border-color:var(--b2); }
+.stars { color:var(--amber); font-size:11px; }
+.vbadge {
+  font-size:9.5px; font-weight:700; color:var(--jade);
+  background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2);
+  padding:2px 8px; border-radius:10px;
+}
+.dacts { display:flex; flex-direction:column; gap:6px; align-items:flex-end; flex-shrink:0; }
+.dfee { font-size:13px; font-weight:800; color:var(--arc); }
+.dbtn {
+  font-size:11px; font-weight:700; font-family:inherit;
+  padding:6px 13px; border-radius:9px; cursor:pointer; border:1px solid;
+  transition:all 0.25s; position:relative; overflow:hidden;
+}
+.dbtn::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.05),transparent); }
+.dbtn.call { background:rgba(67,255,180,0.07); border-color:rgba(67,255,180,0.25); color:var(--mint); }
+.dbtn.call:hover { background:rgba(67,255,180,0.15); transform:scale(1.04); }
+.dbtn.ask  { background:rgba(0,212,255,0.07); border-color:rgba(0,212,255,0.22); color:var(--arc); }
+.dbtn.ask:hover  { background:rgba(0,212,255,0.15); transform:scale(1.04); }
+
+/* ── HOSPITAL CARDS ──────────────────────────────── */
+.hcard {
+  background:linear-gradient(145deg,rgba(21,45,71,0.5),rgba(15,34,53,0.7));
+  border:1px solid rgba(0,212,255,0.07);
+  border-radius:16px; padding:15px; margin-bottom:9px;
+  transition:all 0.3s; position:relative; overflow:hidden;
+}
+.hcard:hover { border-color:var(--b1); transform:translateY(-1px); box-shadow:0 6px 24px rgba(0,0,0,0.4); }
+.htop { display:flex; gap:12px; align-items:center; }
+.hico {
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(255,77,109,0.15),rgba(185,28,28,0.1));
+  border:1px solid rgba(255,77,109,0.2);
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.hnm { font-size:14px; font-weight:800; }
+.htp { font-size:11px; color:var(--arc); font-weight:700; }
+.had { font-size:11px; color:var(--t3); margin-top:2px; }
+.hbgs { display:flex; gap:5px; flex-wrap:wrap; margin-top:9px; }
+.hbg {
+  font-size:10px; padding:3px 9px; border-radius:11px;
+  background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.18); color:var(--jade);
+}
+.hbg.e { background:rgba(255,77,109,0.08); border-color:rgba(255,77,109,0.2); color:var(--rose); }
+.hfoot {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:10px; padding-top:10px; border-top:1px solid rgba(0,212,255,0.06);
+}
+.hstat { font-size:11px; color:var(--t3); text-align:center; }
+.hstat strong { display:block; color:var(--t1); font-size:13px; font-weight:800; }
+.hcall {
+  font-size:12px; font-weight:800; font-family:inherit;
+  padding:8px 17px; border-radius:10px; cursor:pointer;
+  background:linear-gradient(135deg,rgba(255,77,109,0.12),rgba(185,28,28,0.08));
+  border:1px solid rgba(255,77,109,0.28); color:var(--rose);
+  transition:all 0.25s;
+}
+.hcall:hover { background:rgba(255,77,109,0.2); transform:scale(1.04); }
+
+/* ── MEDICINE PANEL ──────────────────────────────── */
+.msinp { display:flex; gap:8px; margin-bottom:4px; }
+.msi {
+  flex:1; background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.1);
+  border-radius:12px; padding:10px 14px; color:var(--t1); font-size:13px;
+  font-family:inherit; outline:none; transition:all 0.3s;
+}
+.msi:focus { border-color:var(--b2); background:rgba(0,212,255,0.07); }
+.msi::placeholder { color:var(--t3); }
+.msg {
+  padding:10px 18px; border-radius:12px; cursor:pointer;
+  background:linear-gradient(135deg, var(--arc3), var(--arc2));
+  border:none; color:white; font-size:13px; font-weight:700; font-family:inherit;
+  transition:all 0.25s; box-shadow:0 4px 14px rgba(0,150,199,0.25);
+}
+.msg:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,150,199,0.4); }
+
+.mcard {
+  background:linear-gradient(145deg,rgba(21,45,71,0.5),rgba(15,34,53,0.7));
+  border:1px solid rgba(0,212,255,0.08); border-radius:16px; padding:16px;
+}
+.mhdr { display:flex; gap:12px; margin-bottom:12px; align-items:flex-start; }
+.mico {
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(189,147,249,0.15),rgba(139,92,246,0.1));
+  border:1px solid rgba(189,147,249,0.2);
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.mnm { font-size:15px; font-weight:800; }
+.mgn { font-size:11px; color:var(--violet); font-weight:700; }
+.mct { font-size:11px; color:var(--t3); }
+.mrow { display:flex; gap:8px; padding:7px 0; border-bottom:1px solid rgba(0,212,255,0.06); font-size:13px; }
+.mrow:last-child { border-bottom:none; }
+.ml { color:var(--t3); font-size:11px; font-weight:700; min-width:90px; }
+.mv { color:var(--t1); flex:1; }
+.mwrn { margin-top:9px; padding:10px 13px; border-radius:10px; background:rgba(255,183,3,0.06); border:1px solid rgba(255,183,3,0.16); font-size:12px; color:#fde68a; }
+
+/* ── HEALTH TOOLS ─────────────────────────────────── */
+.tgrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+.tcrd {
+  background:linear-gradient(145deg,rgba(21,45,71,0.5),rgba(15,34,53,0.7));
+  border:1px solid rgba(0,212,255,0.07); border-radius:16px; padding:16px;
+  cursor:pointer; transition:all 0.3s; position:relative; overflow:hidden;
+}
+.tcrd::before {
+  content:'';
+  position:absolute; inset:0; border-radius:16px;
+  background:linear-gradient(135deg,rgba(0,212,255,0.06),transparent);
+  opacity:0; transition:opacity 0.3s;
+}
+.tcrd:hover { border-color:var(--b2); transform:translateY(-3px); box-shadow:0 10px 30px rgba(0,0,0,0.4); }
+.tcrd:hover::before { opacity:1; }
+.tci { font-size:30px; margin-bottom:9px; display:block; }
+.tcn { font-size:13px; font-weight:800; margin-bottom:3px; }
+.tcd { font-size:11px; color:var(--t3); line-height:1.4; }
+
+.tool-sub {
+  background:linear-gradient(145deg,rgba(21,45,71,0.5),rgba(15,34,53,0.7));
+  border:1px solid rgba(0,212,255,0.08); border-radius:16px; padding:18px;
+}
+.tool-sub h3 { font-size:13px; font-weight:800; margin-bottom:13px; color:var(--arc); }
+.cgrp { flex:1; min-width:80px; }
+.clbl { font-size:11px; color:var(--t3); font-weight:600; margin-bottom:5px; }
+.cinp {
+  background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.1);
+  border-radius:10px; padding:9px 12px; color:var(--t1); font-size:13px;
+  font-family:inherit; outline:none; width:100%; transition:all 0.3s;
+}
+.cinp:focus { border-color:var(--b2); background:rgba(0,212,255,0.07); }
+.crow2 { display:flex; gap:8px; align-items:flex-end; margin-bottom:9px; flex-wrap:wrap; }
+.cbtn {
+  padding:9px 18px; border-radius:10px; cursor:pointer;
+  background:linear-gradient(135deg, var(--arc3), var(--arc2));
+  border:none; color:white; font-size:13px; font-weight:700; font-family:inherit;
+  transition:all 0.25s;
+}
+.cbtn:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(0,150,199,0.3); }
+.cres {
+  padding:13px 15px; border-radius:11px;
+  font-size:14px; font-weight:700; text-align:center;
+  background:rgba(0,212,255,0.05); border:1px solid var(--b1);
+  margin-top:8px; display:none;
+  animation:fadeUp 0.3s ease;
+}
+
+/* ── EMERGENCY MODAL ──────────────────────────────── */
+#sosmod {
+  display:none; position:fixed; inset:0; z-index:200;
+  background:rgba(0,0,0,0.85); backdrop-filter:blur(12px);
+  align-items:center; justify-content:center; padding:20px;
+}
+#sosmod.on { display:flex; }
+
+.soscard {
+  max-width:500px; width:100%;
+  background:linear-gradient(145deg, rgba(10,24,37,0.98), rgba(6,16,24,0.99));
+  border:1px solid rgba(255,77,109,0.25); border-radius:28px;
+  padding:34px 30px; position:relative;
+  box-shadow:0 50px 100px rgba(0,0,0,0.8), var(--glow-coral);
+  animation:popIn 0.35s cubic-bezier(.22,.68,0,1.2);
+  overflow:hidden;
+}
+.soscard::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--coral), transparent);
+}
+@keyframes popIn { from{opacity:0;transform:scale(0.88) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.soscl {
+  position:absolute; top:16px; right:16px;
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08);
+  border-radius:8px; width:34px; height:34px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--t3); font-size:16px; transition:all 0.2s;
+}
+.soscl:hover { color:white; background:rgba(255,255,255,0.1); }
+.sostitle { font-size:23px; font-weight:900; color:var(--coral); margin-bottom:5px; display:flex; align-items:center; gap:9px; }
+.sossub { font-size:12px; color:var(--t3); margin-bottom:22px; }
+.sosnum {
+  background:rgba(255,77,109,0.06); border:1px solid rgba(255,77,109,0.13);
+  border-radius:14px; padding:13px 16px;
+  display:flex; align-items:center; gap:13px; margin-bottom:9px;
+  transition:all 0.25s;
+}
+.sosnum:hover { background:rgba(255,77,109,0.1); border-color:rgba(255,77,109,0.25); }
+.snico { font-size:22px; }
+.snlbl { font-size:10.5px; color:var(--t3); }
+.snnum { font-size:20px; font-weight:900; color:var(--t1); letter-spacing:1px; font-family:'DM Mono',monospace; }
+.sncall {
+  margin-left:auto; background:var(--coral); color:white;
+  border:none; border-radius:11px; padding:9px 17px;
+  font-family:inherit; font-size:12px; font-weight:800; cursor:pointer;
+  transition:all 0.25s; text-decoration:none; display:inline-flex; align-items:center; gap:5px;
+  box-shadow:0 4px 14px rgba(255,77,109,0.3);
+}
+.sncall:hover { transform:scale(1.06); box-shadow:0 6px 20px rgba(255,77,109,0.45); }
+.tipstitle { font-size:12px; font-weight:800; color:var(--coral); margin:14px 0 8px; }
+.tips { font-size:12px; color:#94a3b8; line-height:1.9; }
+.tips li { margin-left:16px; }
+
+/* ── EMERGENCY TOP BAR ────────────────────────────── */
+#ebar {
+  display:none; flex-shrink:0;
+  background:linear-gradient(90deg, rgba(185,28,28,0.9), rgba(153,27,27,0.95));
+  border-bottom:1px solid rgba(255,77,109,0.3);
+  padding:10px 18px; gap:10px; align-items:center;
+  font-size:13px; font-weight:800; color:white;
+  animation:emergPulse 1.2s ease-in-out infinite;
+  backdrop-filter:blur(10px);
+}
+#ebar.on { display:flex; }
+.ecall {
+  background:white; color:#b91c1c; font-weight:900; font-size:12px;
+  padding:6px 15px; border-radius:22px; text-decoration:none; flex-shrink:0;
+  transition:all 0.2s; box-shadow:0 2px 10px rgba(0,0,0,0.3);
+}
+.ecall:hover { transform:scale(1.05); }
+
+/* ── TOAST ─────────────────────────────────────────── */
+#toast {
+  position:fixed; bottom:74px; left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:linear-gradient(135deg, var(--surface), var(--ink));
+  border:1px solid var(--b1); border-radius:12px;
+  padding:11px 20px; font-size:13px; color:var(--t1); z-index:999;
+  opacity:0; pointer-events:none; transition:all 0.3s; white-space:nowrap;
+  box-shadow:0 10px 32px rgba(0,0,0,0.6), var(--glow-sm);
+}
+#toast.on { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* Search input in panels */
+.psrch {
+  background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.1);
+  border-radius:11px; padding:9px 13px; color:var(--t1); font-size:13px;
+  font-family:inherit; outline:none; flex:1; transition:all 0.3s;
+}
+.psrch:focus { border-color:var(--b2); background:rgba(0,212,255,0.07); }
+.psrch::placeholder { color:var(--t3); }
+.psel {
+  background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.1);
+  border-radius:11px; padding:9px 11px; color:var(--t2); font-size:12px;
+  font-family:inherit; outline:none; cursor:pointer; transition:all 0.3s;
+}
+
+/* Error */
+.errrow { background:rgba(255,77,109,0.07); border:1px solid rgba(255,77,109,0.2); border-radius:12px; padding:11px 15px; font-size:13px; color:var(--rose); margin-bottom:12px; }
+
+::-webkit-scrollbar { width:3px; }
+::-webkit-scrollbar-thumb { background:rgba(0,212,255,0.15); border-radius:3px; }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MedFind AI — Bangladesh Health Platform">
+  <meta property="og:description" content="MedFind AI Assistant - Your intelligent health companion for Bangladesh. Get instant medical guidance.">
+  <meta property="og:image" content="https://medfind-bangladesh.web.app/assets/medfind-logo.png">
+  <meta property="og:site_name" content="MedFind Bangladesh">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MedFind AI — Bangladesh Health Platform">
+  <meta name="twitter:description" content="MedFind AI Assistant - Your intelligent health companion for Bangladesh. Get instant medical guidance.">
+  <link rel="icon" type="image/png" href="../assets/medfind-logo.png">
+  <link rel="apple-touch-icon" href="../assets/medfind-logo.png">
+</head>
+<body>
+
+<!-- BACKGROUND -->
+<div id="bg">
+  <div class="bg-grid"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="scanlines"></div>
+  <canvas id="particles"></canvas>
+</div>
+
+<!-- ═══════════════ WELCOME ═══════════════ -->
+<div id="welcome">
+  <div class="wc-outer">
+    <div class="wc-ring"></div>
+    <div class="wc">
+      <div class="wc-logo-wrap" style="display:flex;justify-content:center;margin:0 auto 24px;"><img src="../assets/medfind-logo.png" alt="MedFind" style="height:80px;width:auto;object-fit:contain;"></div>
+        <div class="wc-logo-inner">🏥</div>
+      </div>
+      <div class="wc-badge"><div class="badge-dot"></div><span id="wbadge">BANGLADESH HEALTH PLATFORM</span></div>
+      <div class="wc-title"><span class="t-med">Med</span><span class="t-find">Find</span></div>
+      <div class="wc-sub" id="wsub">Smart AI Health Assistant for Bangladesh<br><span style="color:var(--t4)">Developed by Ahsanul Yamin Babor • medfindbd2026@gmail.com • BAUET 2026</span></div>
+
+      <div class="wc-grid">
+        <div class="wc-feat"><span class="wf-em">🧠</span><div class="wf-ttl" id="wf1">AI Diagnosis</div><div class="wf-dsc" id="wf1d">90%+ accuracy</div></div>
+        <div class="wc-feat"><span class="wf-em">🚨</span><div class="wf-ttl" id="wf2">Emergency SOS</div><div class="wf-dsc" id="wf2d">Instant alerts</div></div>
+        <div class="wc-feat"><span class="wf-em">🌐</span><div class="wf-ttl" id="wf3">Live Web Search</div><div class="wf-dsc" id="wf3d">Real-time info</div></div>
+        <div class="wc-feat"><span class="wf-em">👨‍⚕️</span><div class="wf-ttl" id="wf4">Doctor Finder</div><div class="wf-dsc" id="wf4d">Verified BD docs</div></div>
+        <div class="wc-feat"><span class="wf-em">💊</span><div class="wf-ttl" id="wf5">Medicine Guide</div><div class="wf-dsc" id="wf5d">BD pharmacopoeia</div></div>
+        <div class="wc-feat"><span class="wf-em">❤️</span><div class="wf-ttl" id="wf6">Health Tools</div><div class="wf-dsc" id="wf6d">BMI · BP · Sugar</div></div>
+      </div>
+
+      <div class="wc-sos">
+        <span style="font-size:26px">🚨</span>
+        <div><div class="sos-ttl" id="sostitle">Life-Threatening Emergency?</div><div class="sos-dsc" id="sosdesc">Call 999 (National) • 16167 (DGHS Hotline) immediately. Do NOT wait for AI.</div></div>
+      </div>
+
+      <div style="font-size:12px;color:var(--t3);font-weight:600;margin-bottom:10px" id="langlbl">Choose language / ভাষা বেছে নিন:</div>
+      <div class="wc-langs">
+        <button class="wc-lang on" id="lben" onclick="setLang('en')">🇬🇧 English</button>
+        <button class="wc-lang" id="lbbn" onclick="setLang('bn')">🇧🇩 বাংলা</button>
+      </div>
+      <button class="wc-start" id="wsbtn" onclick="launch()">🚀 Start MedFind AI</button>
+      <div class="wc-dev">⚠️ AI guidance only — always consult a qualified doctor for final diagnosis<br>Developer: <span class="hl">Ahsanul Yamin Babor</span> · <span class="hl">medfindbd2026@gmail.com</span> · BAUET 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MAIN APP ═══════════════ -->
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-logo">
+      <div class="hdr-logo-bg"></div>
+      <span>🏥</span>
+    </div>
+    <div class="hdr-brand">
+      <div class="hdr-name"><span class="m">Med</span><span class="f">Find</span><span class="hdr-tag">AI</span></div>
+      <div class="hdr-sub" id="hdrsub">Smart Health Assistant · Bangladesh</div>
+    </div>
+    <div class="hdr-right">
+      <a href="../index.html" title="Back to MedFind" style="display:flex;align-items:center;gap:5px;color:rgba(0,212,255,.55);font-size:.68rem;font-weight:700;text-decoration:none;padding:5px 11px;border:1px solid rgba(0,212,255,.18);border-radius:20px;transition:.2s;letter-spacing:.3px;margin-right:4px;" onmouseover="this.style.borderColor='rgba(0,212,255,.5)';this.style.color='rgba(0,212,255,.9)'" onmouseout="this.style.borderColor='rgba(0,212,255,.18)';this.style.color='rgba(0,212,255,.55)'">← Back</a>
+      <div class="spill sp-ai">🧠 AI</div>
+      <div class="spill sp-web">🌐 Web</div>
+      <div class="spill sp-live"><div class="live-dot"></div> LIVE</div>
+      <div class="ltog">
+        <button class="lt on" id="lten" onclick="swLang('en')">EN</button>
+        <button class="lt" id="ltbn" onclick="swLang('bn')">বাং</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMERGENCY BAR -->
+  <div id="ebar">
+    <span style="font-size:20px">🚨</span>
+    <span id="ebartxt" style="flex:1">Emergency detected — go to hospital immediately!</span>
+    <a class="ecall" href="tel:999">📞 999</a>
+    <a class="ecall" href="tel:16167" style="margin-left:6px">📞 16167</a>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab on" onclick="goTab('chat',this)">💬 <span id="t1">Chat AI</span></button>
+    <button class="tab" onclick="goTab('sym',this)">🔬 <span id="t2">Symptoms</span></button>
+    <button class="tab" onclick="goTab('doc',this)">👨‍⚕️ <span id="t3">Doctors</span></button>
+    <button class="tab" onclick="goTab('hosp',this)">🏥 <span id="t4">Hospitals</span></button>
+    <button class="tab" onclick="goTab('med',this)">💊 <span id="t5">Medicine</span></button>
+    <button class="tab" onclick="goTab('tools',this)">❤️ <span id="t6">Health Tools</span></button>
+  </div>
+
+  <!-- QUICKBAR -->
+  <div id="qbar"></div>
+
+  <!-- CHAT PANEL -->
+  <div class="panel on" id="chat-panel">
+    <div id="msgs">
+      <div id="typing">
+        <div class="av bot"></div>
+        <div class="tbub">
+          <div class="tdots"><div class="td"></div><div class="td"></div><div class="td"></div></div>
+          <div class="tlbl" id="tlbl">⚡ AI + Web Search analyzing...</div>
+        </div>
+      </div>
+    </div>
+    <div class="inzone">
+      <div class="inrow">
+        <div class="inwrap">
+          <textarea id="inp" rows="2" placeholder="Describe symptoms... (বাংলা বা English)"></textarea>
+        </div>
+        <button id="sendbtn">➤</button>
+      </div>
+      <div class="tbar">
+        <button class="tbtn red" onclick="openSOS()">🚨 <span id="tb1">Emergency</span></button>
+        <button class="tbtn" onclick="gsearch()">🔍 <span id="tb2">Web Search</span></button>
+        <button class="tbtn" onclick="clrChat()">🗑️ <span id="tb3">Clear</span></button>
+        <button class="tbtn" onclick="goTab('sym',null)">🔬 <span id="tb4">Check Symptoms</span></button>
+      </div>
+      <div class="finf" id="finf" style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;">
+        <span>🔴 Emergency: <span class="r">999</span> · DGHS: <span class="c">16167</span> · Ambulance: <span class="c">01969-000911</span> · ⚠️ AI suggestion only</span>
+        <button onclick="showKeyModal()" title="Setup AI API Key" style="background:rgba(0,212,255,.15);border:1px solid rgba(0,212,255,.3);color:#00d4ff;padding:.2rem .65rem;border-radius:6px;font-size:.72rem;cursor:pointer;white-space:nowrap;font-family:inherit;">⚙️ API Key</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SYMPTOM PANEL -->
+  <div class="panel pnl-scrl" id="sym-panel">
+    <div class="phdr">🔬 <span id="sphdr">Symptom Checker</span></div>
+    <div class="sgrid" id="sgrid"></div>
+    <div style="font-size:11px;color:var(--t3);font-weight:700;margin-bottom:6px" id="sellbl">Selected:</div>
+    <div class="selbar" id="selbar"><span style="font-size:12px;color:var(--t3)" id="nosel">None selected</span></div>
+    <button class="abtn" id="abtn" onclick="analyzeSym()">🔬 <span id="abtxt">Analyze with AI</span></button>
+    <div id="symres"></div>
+  </div>
+
+  <!-- DOCTOR PANEL -->
+  <div class="panel pnl-scrl" id="doc-panel">
+    <div class="phdr">👨‍⚕️ <span id="dphdr">Find Doctors — Bangladesh</span></div>
+    <div style="display:flex;gap:8px;margin-bottom:4px">
+      <input class="psrch" id="docq" placeholder="Search doctor / specialty..." oninput="filterDocs()">
+      <select class="psel" id="docf" onchange="filterDocs()">
+        <option value="">All</option>
+        <option>Cardiologist</option><option>Neurologist</option><option>Pediatrician</option>
+        <option>Dermatologist</option><option>Gastroenterologist</option><option>General Physician</option>
+        <option>Orthopedist</option><option>Gynecologist</option><option>Psychiatrist</option>
+      </select>
+    </div>
+    <div id="doclist"></div>
+  </div>
+
+  <!-- HOSPITAL PANEL -->
+  <div class="panel pnl-scrl" id="hosp-panel">
+    <div class="phdr">🏥 <span id="hphdr">Hospitals — Bangladesh</span></div>
+    <div id="hosplist"></div>
+  </div>
+
+  <!-- MEDICINE PANEL -->
+  <div class="panel pnl-scrl" id="med-panel">
+    <div class="phdr">💊 <span id="mphdr">Medicine Info</span></div>
+    <div class="msinp">
+      <input class="msi" id="medq" placeholder="Search medicine... (e.g. Napa, Amoxicillin)" onkeydown="if(event.key==='Enter')searchMed()">
+      <button class="msg" onclick="searchMed()">🔍 Search</button>
+    </div>
+    <div id="medres"></div>
+  </div>
+
+  <!-- TOOLS PANEL -->
+  <div class="panel pnl-scrl" id="tools-panel">
+    <div class="phdr">❤️ <span id="tphdr">Personal Health Tools</span></div>
+    <div class="tgrid">
+      <div class="tcrd" onclick="showTool('bmi')"><span class="tci">⚖️</span><div class="tcn">BMI Calculator</div><div class="tcd">Body Mass Index</div></div>
+      <div class="tcrd" onclick="showTool('bp')"><span class="tci">🩺</span><div class="tcn">BP Analyzer</div><div class="tcd">Blood pressure check</div></div>
+      <div class="tcrd" onclick="showTool('sugar')"><span class="tci">🩸</span><div class="tcn">Sugar/Glucose</div><div class="tcd">Blood sugar levels</div></div>
+      <div class="tcrd" onclick="showTool('water')"><span class="tci">💧</span><div class="tcn">Water Tracker</div><div class="tcd">Daily hydration</div></div>
+    </div>
+    <div id="tooldet"></div>
+  </div>
+</div>
+
+<!-- EMERGENCY MODAL -->
+<div id="sosmod">
+  <div class="soscard">
+    <div class="soscl" onclick="closeSOS()">✕</div>
+    <div class="sostitle">🚨 <span id="sostit">Emergency Numbers</span></div>
+    <div class="sossub" id="sossub">Bangladesh 24/7 Emergency Contacts</div>
+    <div class="sosnum"><span class="snico">🚑</span><div><div class="snlbl" id="sn1">National Emergency</div><div class="snnum">999</div></div><a class="sncall" href="tel:999">📞</a></div>
+    <div class="sosnum"><span class="snico">🏥</span><div><div class="snlbl" id="sn2">DGHS Health Hotline</div><div class="snnum">16167</div></div><a class="sncall" href="tel:16167">📞</a></div>
+    <div class="sosnum"><span class="snico">🚒</span><div><div class="snlbl" id="sn3">Ambulance Dhaka</div><div class="snnum">01969-000911</div></div><a class="sncall" href="tel:01969000911">📞</a></div>
+    <div class="sosnum"><span class="snico">🔥</span><div><div class="snlbl" id="sn4">Fire Service</div><div class="snnum">199</div></div><a class="sncall" href="tel:199">📞</a></div>
+    <div class="sosnum"><span class="snico">👮</span><div><div class="snlbl" id="sn5">Police</div><div class="snnum">100</div></div><a class="sncall" href="tel:100">📞</a></div>
+    <div class="sosnum"><span class="snico">🧠</span><div><div class="snlbl" id="sn6">Mental Health</div><div class="snnum">01779-554391</div></div><a class="sncall" href="tel:01779554391">📞</a></div>
+    <div class="sosnum"><span class="snico">🦟</span><div><div class="snlbl" id="sn7">IEDCR</div><div class="snnum">01401-184551</div></div><a class="sncall" href="tel:01401184551">📞</a></div>
+    <div class="tipstitle" id="tipstit">⚡ While waiting for help:</div>
+    <ul class="tips" id="tipslist">
+      <li>Keep patient calm and still</li>
+      <li>Do NOT give food/water to unconscious patient</li>
+      <li>For bleeding: apply firm direct pressure</li>
+      <li>For burns: cool water 10min, no ice</li>
+      <li>CPR: 30 compressions + 2 breaths (if trained)</li>
+    </ul>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="../assets/js/config.js"></script>
+  <script>
+/* ── SHARED AI HELPER — routes via backend proxy, falls back to direct ── */
+/* ── API KEY MANAGEMENT (fallback only if no backend) ── */
+function getApiKey() {
+  return (window.MEDFIND_CONFIG && window.MEDFIND_CONFIG.ANTHROPIC_KEY) ||
+         localStorage.getItem('mf_anthropic_key') || '';
+}
+function saveApiKey(key) { localStorage.setItem('mf_anthropic_key', key.trim()); }
+
+/* ── SHARED AI HELPER ──
+   Priority:
+   1. Django backend proxy  → API key stays server-side, user needs nothing
+   2. Direct Anthropic API  → only if backend unavailable, uses saved key
+   3. Show key modal        → last resort
+── */
+async function callAI(payload) {
+  const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const backendBase = (window.MEDFIND_CONFIG && window.MEDFIND_CONFIG.API_BASE)
+    || (isLocalhost ? 'http://127.0.0.1:8000/api/v1' : 'https://medfind-bangladesh-ai-healthcare-platform.onrender.com/api/v1');
+
+  // ── 1. Backend proxy (recommended — no key needed for users) ──
+  if (backendBase) {
+    try {
+      // Show wakeup message for Render cold starts (can take 30-50s)
+      const controller = new AbortController();
+      const wakeTimer = setTimeout(() => {
+        const msgEl = document.querySelector('.ai-status-msg');
+        if(msgEl) msgEl.textContent = '⏳ Backend waking up (first request takes ~30s)...';
+      }, 8000);
+
+      const res = await fetch(backendBase + '/ai/chat/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(60000)
+      });
+      clearTimeout(wakeTimer);
+      if (res.ok) {
+        const data = await res.json();
+        if (!data.error) return data;
+        if (data.error && (data.error.includes('ANTHROPIC_API_KEY') || data.error.includes('GEMINI_API_KEY'))) {
+          console.warn('Backend AI key not configured — set GEMINI_API_KEY in Render Dashboard');
+        }
+      }
+    } catch(e) {
+      console.warn('Backend proxy unavailable:', e.message);
+    }
+  }
+
+  // ── 2. Direct Anthropic API (fallback) ──
+  const key = getApiKey();
+  if (!key) {
+    // Only show modal on localhost — on production backend should handle it
+    if (isLocalhost) showKeyModal();
+    throw new Error('NO_API_KEY');
+  }
+
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify(payload)
+  });
+  if (!r.ok) {
+    const e = await r.json();
+    if (r.status === 401) { localStorage.removeItem('mf_anthropic_key'); showKeyModal(); }
+    throw new Error(e.error?.message || 'API error');
+  }
+  return await r.json();
+}
+
+/* ── API KEY MODAL (only shown when backend is offline AND no saved key) ── */
+function showKeyModal() { document.getElementById('keyModal').style.display='flex'; }
+function hideKeyModal() { document.getElementById('keyModal').style.display='none'; }
+function submitApiKey() {
+  const val = document.getElementById('keyInput').value.trim();
+  if (!val.startsWith('sk-ant-')) {
+    document.getElementById('keyErr').textContent = '⚠️ Invalid key — must start with sk-ant-'; return;
+  }
+  saveApiKey(val); hideKeyModal();
+  document.getElementById('keyErr').textContent = '';
+}
+/* ══════════════════════════════════════════════════════
+   PARTICLE SYSTEM
+══════════════════════════════════════════════════════ */
+(function(){
+  const c=document.getElementById('particles');
+  const ctx=c.getContext('2d');
+  let W,H,pts=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  resize();
+  window.addEventListener('resize',resize);
+  for(let i=0;i<55;i++) pts.push({
+    x:Math.random()*1920,y:Math.random()*1080,
+    vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,
+    r:Math.random()*1.5+0.5,
+    a:Math.random(),da:Math.random()*0.005+0.002,
+    c:Math.random()>0.5?'0,212,255':'0,207,200'
+  });
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.a+=p.da;
+      if(p.a>1||p.a<0)p.da*=-1;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${p.c},${p.a*0.6})`;ctx.fill();
+    });
+    // Draw connections
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.strokeStyle=`rgba(0,180,216,${(1-d/120)*0.08})`;
+          ctx.lineWidth=0.5;ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════════════════════════════════
+   TRANSLATIONS
+══════════════════════════════════════════════════════ */
+const T={
+  en:{
+    wbadge:'BANGLADESH HEALTH PLATFORM',wsub:'Smart AI Health Assistant for Bangladesh',
+    wf1:'AI Diagnosis',wf1d:'90%+ accuracy',wf2:'Emergency SOS',wf2d:'Instant alerts',
+    wf3:'Live Web Search',wf3d:'Real-time info',wf4:'Doctor Finder',wf4d:'Verified BD docs',
+    wf5:'Medicine Guide',wf5d:'BD pharmacopoeia',wf6:'Health Tools',wf6d:'BMI · BP · Sugar',
+    sostitle:'Life-Threatening Emergency?',sosdesc:'Call 999 (National) • 16167 (DGHS) immediately.',
+    wsbtn:'🚀 Start MedFind AI',
+    hdrsub:'Smart Health Assistant · Bangladesh',
+    t1:'Chat AI',t2:'Symptoms',t3:'Doctors',t4:'Hospitals',t5:'Medicine',t6:'Health Tools',
+    inp:'Describe symptoms... (Bangla or English)',
+    tlbl:'⚡ AI + Web Search analyzing...',
+    tb1:'Emergency',tb2:'Web Search',tb3:'Clear',tb4:'Check Symptoms',
+    sphdr:'Symptom Checker',sellbl:'Selected:',nosel:'None selected',abtxt:'🔬 Analyze with AI',
+    dphdr:'Find Doctors — Bangladesh',hphdr:'Hospitals — Bangladesh',
+    mphdr:'Medicine Info — BD Pharmacopoeia',tphdr:'Personal Health Tools',
+    sostit:'Emergency Numbers',sossub:'Bangladesh 24/7 Emergency Contacts',
+    sn1:'National Emergency',sn2:'DGHS Health Hotline',sn3:'Ambulance Dhaka',
+    sn4:'Fire Service',sn5:'Police',sn6:'Mental Health',sn7:'IEDCR',
+    tipstit:'⚡ While waiting for help:',
+    tips:['Keep patient calm and still','Do NOT give food/water to unconscious','For bleeding: firm direct pressure','For burns: cool water 10min, no ice','CPR: 30 compressions + 2 breaths if trained'],
+    ebartxt:'Emergency detected — go to hospital immediately!',
+    clrTxt:'Clear chat history?',
+    qp:[
+      {l:'Fever & Headache',i:'🤒',t:'I have fever and headache. What should I do?'},
+      {l:'Chest Pain',i:'❤️',t:'I have chest pain and difficulty breathing'},
+      {l:'🚨 Emergency!',i:'🚨',t:'Patient is unconscious — what to do immediately?',e:true},
+      {l:'Paracetamol',i:'💊',t:'Paracetamol dose for adults and children?'},
+      {l:'Dengue',i:'🦟',t:'What are dengue fever symptoms? When is it dangerous?'},
+      {l:'Child Fever',i:'👶',t:'My 3yr old has 103°F fever — what should I do?'},
+      {l:'Burn First Aid',i:'🩹',t:'I burned my hand. What is the first aid?'},
+      {l:'Mental Health',i:'🧠',t:'I feel very anxious and depressed. What to do?'},
+      {l:'Blood Sugar',i:'💉',t:'Signs of high blood sugar? When is it dangerous?'},
+      {l:'Doctor?',i:'👨‍⚕️',t:'I have chronic back pain — which specialist should I see?'},
+    ],
+    welcome:`🏥 Hello! I'm **MedFind AI** — your smart health assistant!
+
+I can help you:
+• 🤒 Analyze symptoms with 90%+ accuracy
+• 🚨 Detect emergencies & provide instant first aid
+• 👨‍⚕️ Find the right specialist & hospital in Bangladesh
+• 💊 Safe medicine guidance (OTC only)
+• 🌐 Real-time web search for verified medical info
+• ❤️ BMI, BP & Sugar tracking tools
+
+Use the tabs above to explore all features!
+Type your symptoms below in Bangla or English 👇
+
+⚠️ AI guidance only — always see a doctor for final diagnosis.`
+  },
+  bn:{
+    wbadge:'বাংলাদেশ স্বাস্থ্য প্ল্যাটফর্ম',wsub:'বাংলাদেশের জন্য স্মার্ট AI স্বাস্থ্য সহকারী',
+    wf1:'AI ডায়াগনসিস',wf1d:'৯০%+ নির্ভুল',wf2:'জরুরি SOS',wf2d:'তাৎক্ষণিক সতর্কতা',
+    wf3:'লাইভ ওয়েব সার্চ',wf3d:'রিয়েল-টাইম তথ্য',wf4:'ডাক্তার খোঁজা',wf4d:'যাচাইকৃত ডাক্তার',
+    wf5:'ওষুধ গাইড',wf5d:'বাংলাদেশ ফার্মাকোপিয়া',wf6:'স্বাস্থ্য টুল',wf6d:'BMI · BP · সুগার',
+    sostitle:'জীবন-বিপদজনক জরুরি অবস্থা?',sosdesc:'এখনই ৯৯৯ • ১৬১৬৭ (DGHS) কল করুন।',
+    wsbtn:'🚀 MedFind AI শুরু করুন',
+    hdrsub:'স্মার্ট স্বাস্থ্য সহকারী · বাংলাদেশ',
+    t1:'চ্যাট AI',t2:'লক্ষণ',t3:'ডাক্তার',t4:'হাসপাতাল',t5:'ওষুধ',t6:'স্বাস্থ্য টুল',
+    inp:'আপনার সমস্যা লিখুন... (বাংলা বা English)',
+    tlbl:'⚡ AI + ওয়েব সার্চ দিয়ে বিশ্লেষণ হচ্ছে...',
+    tb1:'জরুরি',tb2:'ওয়েব সার্চ',tb3:'মুছুন',tb4:'লক্ষণ পরীক্ষা',
+    sphdr:'লক্ষণ পরীক্ষক',sellbl:'নির্বাচিত:',nosel:'কিছু নেই',abtxt:'🔬 AI দিয়ে বিশ্লেষণ',
+    dphdr:'ডাক্তার খুঁজুন — বাংলাদেশ',hphdr:'হাসপাতাল — বাংলাদেশ',
+    mphdr:'ওষুধের তথ্য — বাংলাদেশ',tphdr:'ব্যক্তিগত স্বাস্থ্য টুল',
+    sostit:'জরুরি নম্বরসমূহ',sossub:'বাংলাদেশ ২৪/৭ জরুরি যোগাযোগ',
+    sn1:'জাতীয় জরুরি সেবা',sn2:'DGHS হটলাইন',sn3:'অ্যাম্বুলেন্স (ঢাকা)',
+    sn4:'ফায়ার সার্ভিস',sn5:'পুলিশ',sn6:'মানসিক স্বাস্থ্য',sn7:'IEDCR',
+    tipstit:'⚡ সাহায্য আসার আগে:',
+    tips:['রোগীকে শান্ত রাখুন','অজ্ঞান রোগীকে খাবার দেবেন না','রক্তপাতে চাপ দিন','পোড়ায় ঠান্ডা পানি ১০ মিনিট','CPR দিন যদি প্রশিক্ষিত হন'],
+    ebartxt:'🚨 জরুরি অবস্থা! এখনই হাসপাতালে যান!',
+    clrTxt:'চ্যাট মুছবেন?',
+    qp:[
+      {l:'জ্বর+মাথাব্যথা',i:'🤒',t:'আমার জ্বর এবং মাথাব্যথা হচ্ছে, কী করব?'},
+      {l:'বুকে ব্যথা',i:'❤️',t:'বুকে ব্যথা এবং শ্বাস নিতে কষ্ট হচ্ছে'},
+      {l:'🚨 জরুরি!',i:'🚨',t:'রোগী অজ্ঞান হয়ে গেছে — এখনই কী করব?',e:true},
+      {l:'Paracetamol',i:'💊',t:'Paracetamol এর ডোজ কত? শিশুর জন্য কত?'},
+      {l:'ডেঙ্গু',i:'🦟',t:'ডেঙ্গু জ্বরের লক্ষণ কী? কখন বিপদজনক?'},
+      {l:'শিশু জ্বর',i:'👶',t:'আমার ৩ বছরের বাচ্চার জ্বর ১০৩°F — কী করব?'},
+      {l:'পোড়া চিকিৎসা',i:'🩹',t:'হাত পুড়ে গেছে — প্রাথমিক চিকিৎসা কী?'},
+      {l:'মানসিক স্বাস্থ্য',i:'🧠',t:'আমি খুব দুশ্চিন্তায় ভুগছি, কী করব?'},
+      {l:'ডায়াবেটিস',i:'💉',t:'রক্তে চিনি বেশি হলে লক্ষণ কী?'},
+      {l:'ডাক্তার দরকার',i:'👨‍⚕️',t:'পিঠে ব্যথা — কোন বিশেষজ্ঞ দেখাব?'},
+    ],
+    welcome:`🏥 আস্সালামু আলাইকুম! আমি **MedFind AI** — আপনার স্মার্ট স্বাস্থ্য সহকারী!
+
+আমি সাহায্য করতে পারি:
+• 🤒 ৯০%+ নির্ভুলতায় লক্ষণ বিশ্লেষণ
+• 🚨 জরুরি অবস্থা শনাক্ত ও প্রাথমিক চিকিৎসা
+• 👨‍⚕️ সঠিক বিশেষজ্ঞ ও হাসপাতাল সুপারিশ
+• 💊 নিরাপদ ওষুধ গাইড (শুধু OTC)
+• 🌐 Real-time ওয়েব সার্চ থেকে যাচাইকৃত তথ্য
+• ❤️ BMI, BP ও সুগার ট্র্যাকিং টুল
+
+উপরের ট্যাব থেকে সব feature explore করুন!
+নিচে আপনার সমস্যা লিখুন 👇
+
+⚠️ AI পরামর্শ মাত্র — চূড়ান্ত রোগ নির্ণয়ের জন্য ডাক্তার দেখান।`
+  }
+};
+
+const SYSPROMPT=`You are MedFind AI — Bangladesh's most accurate AI health assistant. Developer: Ahsanul Yamin Babor (BAUET 2026).
+
+LANGUAGE RULE: If the user writes in Bengali/Bangla → respond 100% in Bengali. If English → respond in English. Auto-detect always.
+
+ACCURACY PROTOCOL (target 90%+):
+- Never guess — ask 1-2 clarifying questions if symptoms are vague (duration? severity? location?)
+- Always give differential diagnosis with probability % (e.g. "Typhoid 65% | Dengue 25% | Viral fever 10%")
+- Screen for red flags every response
+- Follow WHO + DGHS + BIRDEM + BSMMU guidelines
+- For drug doses, always specify adult vs child dose, kidney/liver caution
+- Mention drug availability in Bangladesh (brand names: Napa=paracetamol, Seclo=omeprazole, Amodis=metronidazole, Zithrin=azithromycin, Fimoxyl=amoxicillin)
+
+RESPONSE STRUCTURE (always follow this order):
+🔍 **Symptom Analysis** — what the symptoms suggest
+🎯 **Possible Conditions** — list with % probability
+⚡ **Urgency Level** — EMERGENCY🔴 / Urgent🟠 / Moderate🟡 / Mild🟢
+👨‍⚕️ **Recommended Specialist** + nearest BD hospital type
+💊 **Initial Management** — OTC options + when to get Rx
+💡 **Do This Now** — immediate actionable steps
+⚠️ **Go to Hospital Immediately If** — red flag list
+
+EMERGENCY TRIGGERS (auto-detect, show red alert):
+chest pain + sweating, unconscious/fainting, can't breathe, stroke (FAST test), severe bleeding, seizure, poisoning, dengue shock, anaphylaxis, severe burns
+
+BD EMERGENCY NUMBERS (include when urgent):
+🚨 999 (National) | 16167 (DGHS) | 01969-000911 (Ambulance) | 01401-184551 (IEDCR)
+
+MEDFIND LINKS (add after every response):
+🔗 [Find Doctor](/pages/doctors/search.html) | [Lab Tests](/pages/lab/tests.html) | [Treatment Guide](/pages/treatments/index.html) | [Drug Info](/pages/drugs/index.html)
+
+DISCLAIMER (end every response):
+*⚠️ AI guidance only — always consult a qualified doctor for diagnosis and treatment.*`;
+
+const ERE=/chest pain|heart attack|unconscious|অজ্ঞান|হার্ট অ্যাটাক|stroke|seizure|bleeding|শ্বাস নিতে|EMERGENCY 🔴|choking|not breathing|dengue shock|poisoning|বিষ/i;
+
+/* ══════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════ */
+let lang='en', hist=[], loading=false, selSym=new Set();
+
+// Auto-show key modal ONLY on localhost when Django is not running
+// On Firebase/production: backend proxy handles Anthropic key — modal never shows
+(function checkKey(){
+  const isLocalhost = location.hostname==='localhost' || location.hostname==='127.0.0.1';
+  if(isLocalhost && !getApiKey()){
+    fetch('http://127.0.0.1:8000/api/v1/health/', {signal: AbortSignal.timeout(2000)})
+      .then(r => r.ok ? null : showKeyModal())
+      .catch(() => showKeyModal());
+  }
+  // Production: never show modal automatically — backend handles the key
+})();
+
+/* ══════════════════════════════════════════════════════
+   WELCOME
+══════════════════════════════════════════════════════ */
+function setLang(l){
+  lang=l;
+  ['en','bn'].forEach(x=>document.getElementById('lb'+x).classList.toggle('on',x===l));
+  const t=T[l];
+  const ids=['wbadge','wsub','wf1','wf1d','wf2','wf2d','wf3','wf3d','wf4','wf4d','wf5','wf5d','wf6','wf6d','sostitle','sosdesc'];
+  const vals=[t.wbadge,t.wsub,t.wf1,t.wf1d,t.wf2,t.wf2d,t.wf3,t.wf3d,t.wf4,t.wf4d,t.wf5,t.wf5d,t.wf6,t.wf6d,t.sostitle,t.sosdesc];
+  ids.forEach((id,i)=>document.getElementById(id).textContent=vals[i]);
+  document.getElementById('wsbtn').textContent=t.wsbtn;
+}
+
+function launch(){
+  const w=document.getElementById('welcome');
+  w.style.transition='opacity 0.5s ease, transform 0.5s ease';
+  w.style.opacity='0'; w.style.transform='scale(1.04)';
+  setTimeout(()=>{
+    w.style.display='none';
+    const app=document.getElementById('app');
+    app.style.display='flex';
+    app.style.animation='appReveal 0.5s ease both';
+    applyLang(); buildQbar(); buildSymGrid(); renderDocs(); renderHosps();
+    addBot(T[lang].welcome);
+  },500);
+}
+
+const style=document.createElement('style');
+style.textContent=`@keyframes appReveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`;
+document.head.appendChild(style);
+
+/* ══════════════════════════════════════════════════════
+   LANG SWITCH IN APP
+══════════════════════════════════════════════════════ */
+function swLang(l){
+  lang=l;
+  document.getElementById('lten').classList.toggle('on',l==='en');
+  document.getElementById('ltbn').classList.toggle('on',l==='bn');
+  applyLang(); buildQbar();
+}
+
+function applyLang(){
+  const t=T[lang];
+  document.getElementById('hdrsub').textContent=t.hdrsub;
+  ['t1','t2','t3','t4','t5','t6'].forEach((id,i)=>document.getElementById(id).textContent=[t.t1,t.t2,t.t3,t.t4,t.t5,t.t6][i]);
+  document.getElementById('inp').placeholder=t.inp;
+  document.getElementById('tlbl').textContent=t.tlbl;
+  ['tb1','tb2','tb3','tb4'].forEach((id,i)=>document.getElementById(id).textContent=[t.tb1,t.tb2,t.tb3,t.tb4][i]);
+  document.getElementById('finf').innerHTML=`🔴 Emergency: <span class="r">999</span> · DGHS: <span class="c">16167</span> · <span class="c">01969-000911</span> · ⚠️ ${l==='bn'?'AI পরামর্শ মাত্র':'AI suggestion only'}`;
+  ['sphdr','sellbl','nosel','abtxt','dphdr','hphdr','mphdr','tphdr','sostit','sossub'].forEach((id,i)=>document.getElementById(id).textContent=[t.sphdr,t.sellbl,t.nosel,t.abtxt,t.dphdr,t.hphdr,t.mphdr,t.tphdr,t.sostit,t.sossub][i]);
+  ['sn1','sn2','sn3','sn4','sn5','sn6','sn7'].forEach((id,i)=>document.getElementById(id).textContent=[t.sn1,t.sn2,t.sn3,t.sn4,t.sn5,t.sn6,t.sn7][i]);
+  document.getElementById('tipstit').textContent=t.tipstit;
+  document.getElementById('tipslist').innerHTML=t.tips.map(s=>`<li>${s}</li>`).join('');
+  document.getElementById('ebartxt').textContent=t.ebartxt;
+}
+
+/* TABS */
+function goTab(name,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById(name+'-panel').classList.add('on');
+  if(el)el.classList.add('on');
+  else{const all=document.querySelectorAll('.tab');const idx=['chat','sym','doc','hosp','med','tools'].indexOf(name);if(idx>=0)all[idx].classList.add('on');}
+  document.getElementById('qbar').style.display=name==='chat'?'flex':'none';
+}
+
+/* QUICKBAR */
+function buildQbar(){
+  const b=document.getElementById('qbar');
+  b.innerHTML='';
+  T[lang].qp.forEach(p=>{
+    const btn=document.createElement('button');
+    btn.className='qb'+(p.e?' qem':'');
+    btn.innerHTML=`${p.i} ${p.l}`;
+    btn.onclick=()=>send(p.t);
+    b.appendChild(btn);
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   SEND / AI
+══════════════════════════════════════════════════════ */
+/* ── AGENTIC LOOP — handles web_search tool_use properly ── */
+async function callAIWithTools(payload, maxTurns=4) {
+  let messages = [...payload.messages];
+  for (let turn=0; turn<maxTurns; turn++) {
+    const d = await callAI({...payload, messages});
+    if (d.error) throw new Error(d.error.message || 'API error');
+
+    const textBlocks  = d.content.filter(b => b.type==='text' && b.text);
+    const toolBlocks  = d.content.filter(b => b.type==='tool_use');
+
+    // If no tool calls or stop_reason is end_turn → return final reply
+    if (toolBlocks.length === 0 || d.stop_reason === 'end_turn') {
+      return textBlocks.map(b=>b.text).join('\n').trim();
+    }
+
+    // Handle tool_use: push assistant message + tool results
+    messages.push({role:'assistant', content: d.content});
+    const toolResults = toolBlocks.map(tb => {
+      // web_search_20250305 results come back from Anthropic server-side
+      // but if we're calling directly, we simulate an empty result
+      // so Claude will reason from its own knowledge
+      return {
+        type: 'tool_result',
+        tool_use_id: tb.id,
+        content: tb.name === 'web_search'
+          ? (tb.input?.query ? `Search query: "${tb.input.query}" — Using medical knowledge base for Bangladesh context.` : 'Search unavailable in direct mode.')
+          : 'Tool executed.'
+      };
+    });
+    messages.push({role:'user', content: toolResults});
+    // Continue loop to get final response
+  }
+  // Fallback: return whatever text we have
+  return '';
+}
+
+async function send(preset){
+  const inp=document.getElementById('inp');
+  const txt=(preset||inp.value).trim();
+  if(!txt||loading)return;
+  inp.value=''; loading=true;
+  addUser(txt); hist.push({role:'user',content:txt});
+  setTyping(true,ERE.test(txt)?'🚨 Emergency scan...':T[lang].tlbl);
+  const btn=document.getElementById('sendbtn'); btn.disabled=true; btn.textContent='⏳';
+  try{
+    const reply = await callAIWithTools({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:1500,
+      system:SYSPROMPT,
+      tools:[{type:'web_search_20250305',name:'web_search'}],
+      messages:hist.slice(-14)
+    });
+    if(!reply) throw new Error('Empty response');
+    hist.push({role:'assistant', content:reply});
+    addBot(reply);
+    addQuickActions(txt);
+    if(ERE.test(reply+txt)) showEbar(true);
+  }catch(e){
+    hist.pop();
+    if(e.message==='NO_API_KEY'||e.message==='NO_BACKEND_NO_KEY'){
+      addErr(lang==='bn'?'⚙️ AI সংযোগ নেই। Django backend চালু করুন অথবা footer এ ⚙️ API Key দিন।':'⚙️ AI not connected. Start Django backend or click ⚙️ API Key in footer.');
+    } else if(e.message==='Failed to fetch'||e.message.includes('NetworkError')){
+      addErr(lang==='bn'?'নেটওয়ার্ক সমস্যা। ইন্টারনেট সংযোগ চেক করুন।':'Network error. Check your internet connection.');
+    } else {
+      addErr(lang==='bn'?'সংযোগে সমস্যা। আবার চেষ্টা করুন।':'Connection error. Please try again.');
+    }
+  }finally{
+    loading=false; setTyping(false); btn.disabled=false; btn.textContent='➤';
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   SYMPTOM CHECKER
+══════════════════════════════════════════════════════ */
+const SYMS=[
+  {l:'জ্বর/Fever',i:'🌡️'},{l:'মাথাব্যথা',i:'🤕'},{l:'কাশি/Cough',i:'😮‍💨'},
+  {l:'শ্বাসকষ্ট',i:'🫁'},{l:'বুকে ব্যথা',i:'💔'},{l:'পেটে ব্যথা',i:'🤢'},
+  {l:'বমি',i:'🤮'},{l:'ডায়রিয়া',i:'💧'},{l:'দুর্বলতা',i:'😴'},
+  {l:'গলাব্যথা',i:'😷'},{l:'Rash/ফুসকুড়ি',i:'🔴'},{l:'চোখে সমস্যা',i:'👁️'},
+  {l:'জয়েন্ট ব্যথা',i:'🦴'},{l:'মাথা ঘোরা',i:'😵'},{l:'খিদে নেই',i:'🍽️'},
+  {l:'ঘুমের সমস্যা',i:'🛌'},{l:'অজ্ঞান',i:'💫'},{l:'রক্তপাত',i:'🩸'},
+  {l:'ফুলে যাওয়া',i:'🫧'},{l:'জন্ডিস',i:'💛'},{l:'প্রস্রাব সমস্যা',i:'🚽'},
+];
+
+function buildSymGrid(){
+  document.getElementById('sgrid').innerHTML=SYMS.map(s=>
+    `<button class="schip" onclick="tglSym('${s.l}',this)"><span>${s.i}</span>${s.l}</button>`
+  ).join('');
+}
+
+function tglSym(l,el){
+  selSym.has(l)?selSym.delete(l):selSym.add(l);
+  el.classList.toggle('on',selSym.has(l));
+  updSelBar();
+}
+function updSelBar(){
+  const b=document.getElementById('selbar');
+  if(!selSym.size){b.innerHTML=`<span style="font-size:12px;color:var(--t3)" id="nosel">${T[lang].nosel}</span>`;return;}
+  b.innerHTML=[...selSym].map(s=>`<span class="stag">${s}<span class="srm" onclick="rmSym('${s}')">✕</span></span>`).join('');
+}
+function rmSym(l){
+  selSym.delete(l);
+  document.querySelectorAll('.schip').forEach(e=>{if(e.textContent.includes(l.split('/')[0]))e.classList.remove('on');});
+  updSelBar();
+}
+
+async function analyzeSym(){
+  if(!selSym.size){toast('⚠️ '+(lang==='bn'?'লক্ষণ বেছে নিন':'Select at least one symptom'));return;}
+  const btn=document.getElementById('abtn');
+  btn.disabled=true; btn.textContent='⏳ Analyzing...';
+  document.getElementById('symres').innerHTML='';
+  const list=[...selSym].join(', ');
+  const SYM_SYSTEM = `You are a medical diagnostic AI for Bangladesh. Analyze symptoms and return ONLY valid JSON — no markdown, no explanation, no extra text.
+JSON format EXACTLY:
+{"conditions":[{"name":"Condition Name","prob":70,"color":"#00d4ff"},{"name":"Condition 2","prob":20,"color":"#00cfc8"},{"name":"Condition 3","prob":10,"color":"#43ffb4"}],"urgency":"Mild","uc":"us","specialist":"General Physician","action":"Rest, stay hydrated, take Napa 500mg for fever. See doctor if no improvement in 3 days.","warning":"Go to hospital immediately if breathing difficulty or chest pain."}
+uc values: "ue"=EMERGENCY, "uu"=Urgent, "um"=Moderate, "us"=Mild
+Provide 3 most likely conditions with probabilities summing to 100. Use Bangladesh context (local diseases: dengue, typhoid, chikungunya, malaria, etc.). Brand names: Napa=paracetamol.`;
+
+  try{
+    // No web_search tool for JSON mode — cleaner output
+    const d = await callAI({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:800,
+      system: SYM_SYSTEM,
+      messages:[{role:'user',content:`Patient symptoms: ${list}\nPatient is in Bangladesh. Return JSON only.`}]
+    });
+    // Extract text from content blocks safely
+    const rawText = Array.isArray(d.content)
+      ? d.content.filter(b=>b.type==='text'&&b.text).map(b=>b.text).join('').trim()
+      : (typeof d.content === 'string' ? d.content : '');
+    // Strip any markdown fences
+    const cleaned = rawText.replace(/```json|```/gi,'').trim();
+    // Find JSON object in response
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+    if(!jsonMatch) throw new Error('No JSON in response');
+    const res = JSON.parse(jsonMatch[0]);
+    renderSymRes(res,list);
+  }catch(e){
+    console.error('Symptom analysis error:',e);
+    if(e.message==='NO_API_KEY'){
+      document.getElementById('symres').innerHTML=`<div class="errrow">⚙️ API Key required. Click ⚙️ API Key button in footer.</div>`;
+    } else {
+      document.getElementById('symres').innerHTML=`<div class="errrow">Analysis failed: ${e.message}. Please try again.</div>`;
+    }
+  }finally{btn.disabled=false;btn.innerHTML=T[lang].abtxt;}
+}
+
+function renderSymRes(r,list){
+  document.getElementById('symres').innerHTML=`
+    <div class="rcard">
+      <div class="rtitle">🎯 Analysis Result</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <span class="ubadge ${r.uc||'us'}">⚡ ${r.urgency||'Mild'}</span>
+        ${r.specialist?`<span style="background:rgba(189,147,249,0.08);border:1px solid rgba(189,147,249,0.2);border-radius:9px;padding:4px 11px;font-size:12px;color:var(--violet)">👨‍⚕️ ${r.specialist}</span>`:''}
+      </div>
+      ${(r.conditions||[]).map(c=>`
+        <div class="crow">
+          <div class="cnm">${c.name}</div>
+          <div class="cbg"><div class="cfill" style="width:0%;background:${c.color}" data-w="${c.prob}%"></div></div>
+          <div class="cpct">${c.prob}%</div>
+        </div>`).join('')}
+      ${r.action?`<div class="mwrn" style="margin-top:12px">💡 ${r.action}</div>`:''}
+      <div style="margin-top:11px;font-size:11px;color:var(--t3)">⚠️ AI estimate only — see a doctor for diagnosis.</div>
+      <button onclick="askChat('${list.replace(/'/g,"\\'")} — symptoms detail analysis')" style="margin-top:10px;width:100%;padding:9px;border-radius:10px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.18);color:var(--arc);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">💬 ${lang==='bn'?'Chat এ বিস্তারিত জানুন':'Get detailed chat analysis'} →</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+        <a href="./doctors/search.html?specialty=${encodeURIComponent(r.specialist||'')}" style="display:flex;align-items:center;gap:6px;background:rgba(26,86,219,.12);border:1px solid rgba(26,86,219,.25);color:#60a5fa;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;text-decoration:none">👨‍⚕️ Find ${r.specialist||'Doctor'}</a>
+        <a href="./treatments/index.html?condition=${encodeURIComponent((r.conditions&&r.conditions[0]?.name)||list)}" style="display:flex;align-items:center;gap:6px;background:rgba(13,148,136,.12);border:1px solid rgba(13,148,136,.25);color:#5eead4;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;text-decoration:none">📋 Treatment Guide</a>
+        <a href="./drugs/index.html" style="display:flex;align-items:center;gap:6px;background:rgba(217,119,6,.12);border:1px solid rgba(217,119,6,.25);color:#fcd34d;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;text-decoration:none">💊 Drug Info</a>
+        <a href="../telemedicine.html" style="display:flex;align-items:center;gap:6px;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);color:#a78bfa;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;text-decoration:none">📹 Video Consult</a>
+      </div>
+    </div>`;
+  setTimeout(()=>document.querySelectorAll('.cfill').forEach(el=>el.style.width=el.dataset.w),80);
+}
+
+/* ══════════════════════════════════════════════════════
+   DOCTORS
+══════════════════════════════════════════════════════ */
+const DOCS=[
+  {n:'Prof. Dr. A.K.M. Anwarul Islam',s:'Cardiologist',h:'NICVD, Dhaka',e:'28 yrs',r:'4.9',f:'1500৳',t:['Heart Disease','Angioplasty','ECG'],v:true},
+  {n:'Dr. Shahana Rahman',s:'Pediatrician',h:'Dhaka Shishu Hospital',e:'15 yrs',r:'4.8',f:'800৳',t:['Child Health','Vaccines','Neonatology'],v:true},
+  {n:'Dr. Mohammad Hasan',s:'Neurologist',h:'BSMMU, Dhaka',e:'20 yrs',r:'4.7',f:'1200৳',t:['Stroke','Epilepsy','Migraine'],v:true},
+  {n:'Dr. Fatema Khatun',s:'Dermatologist',h:'Square Hospitals',e:'12 yrs',r:'4.8',f:'1000৳',t:['Skin','Acne','Eczema'],v:true},
+  {n:'Dr. Rafiqul Islam',s:'Gastroenterologist',h:'BIRDEM Hospital',e:'18 yrs',r:'4.6',f:'1200৳',t:['Diabetes','Liver','GI'],v:false},
+  {n:'Dr. Nasreen Akter',s:'Gynecologist',h:'Evercare Hospital',e:'22 yrs',r:'4.9',f:'1500৳',t:['Obstetrics','Fertility'],v:true},
+  {n:'Dr. Kamrul Hasan',s:'Orthopedist',h:'National Orthopaedic',e:'16 yrs',r:'4.7',f:'1000৳',t:['Bone','Joint Replacement'],v:false},
+  {n:'Dr. Parvin Sultana',s:'General Physician',h:'Popular Medical',e:'10 yrs',r:'4.5',f:'600৳',t:['Fever','Diabetes','Hypertension'],v:true},
+  {n:'Dr. Imran Hossain',s:'Psychiatrist',h:'NIMH, Dhaka',e:'14 yrs',r:'4.7',f:'900৳',t:['Depression','Anxiety','Bipolar'],v:true},
+];
+
+function renderDocs(list){
+  document.getElementById('doclist').innerHTML=(list||DOCS).map(d=>`
+    <div class="dcard">
+      <div class="dav">👨‍⚕️</div>
+      <div style="flex:1">
+        <div class="dnm">${d.n} ${d.v?'<span class="vbadge">✓ Verified</span>':''}</div>
+        <div class="dsp">${d.s}</div>
+        <div class="dmeta"><span>🏥 ${d.h}</span><span>⏱ ${d.e}</span><span class="stars">★ ${d.r}</span></div>
+        <div class="dtgs">${d.t.map(x=>`<span class="dtg">${x}</span>`).join('')}</div>
+      </div>
+      <div class="dacts">
+        <div class="dfee">${d.f}</div>
+        <button class="dbtn call" onclick="toast('📞 Contact: ${d.h}')">📞 Call</button>
+        <button class="dbtn ask" onclick="askChat('I need to see a ${d.s}. What should I know?')">Ask AI</button>
+      </div>
+    </div>`).join('');
+}
+function filterDocs(){
+  const q=document.getElementById('docq').value.toLowerCase();
+  const f=document.getElementById('docf').value;
+  renderDocs(DOCS.filter(d=>(!q||d.n.toLowerCase().includes(q)||d.s.toLowerCase().includes(q)||d.t.some(t=>t.toLowerCase().includes(q)))&&(!f||d.s===f)));
+}
+
+/* ══════════════════════════════════════════════════════
+   HOSPITALS
+══════════════════════════════════════════════════════ */
+const HOSPS=[
+  {n:'Dhaka Medical College Hospital',t:'Government Teaching',a:'Bakshibazar, Dhaka',i:'🏥',b:['Emergency 24/7','ICU','Trauma','Burn Unit'],beds:'2200',r:'4.2',p:'02-55165088',e:true},
+  {n:'BIRDEM General Hospital',t:'Diabetic Specialist',a:'Shahbag, Dhaka',i:'🩺',b:['Diabetes','Endocrinology','Emergency'],beds:'650',r:'4.5',p:'02-8616641',e:false},
+  {n:'Square Hospitals Ltd.',t:'Private Multispecialty',a:'West Panthapath, Dhaka',i:'🏨',b:['Emergency 24/7','Cardiac','Neurology','ICU'],beds:'350',r:'4.7',p:'10616',e:true},
+  {n:'Evercare Hospital',t:'Private International',a:'Bashundhara, Dhaka',i:'🏩',b:['Emergency','Oncology','Transplant','NICU'],beds:'450',r:'4.8',p:'10678',e:true},
+  {n:'NICVD',t:'Government Cardiac',a:'Sher-e-Bangla Nagar',i:'❤️',b:['Heart Surgery','Cath Lab','Cardiac ICU'],beds:'300',r:'4.6',p:'02-9128360',e:false},
+  {n:'Dhaka Shishu Hospital',t:'Government Children',a:'Sher-e-Bangla Nagar',i:'👶',b:['Pediatric Emergency','NICU','Peds Surgery'],beds:'600',r:'4.4',p:'02-8116062',e:true},
+  {n:'BSMMU',t:'Government University',a:'Shahbag, Dhaka',i:'🎓',b:['All Specialties','Research','Emergency'],beds:'1800',r:'4.3',p:'02-9661065',e:true},
+  {n:'Popular Medical Centre',t:'Private Diagnostic',a:'Dhanmondi, Dhaka',i:'🔬',b:['Diagnostics','Emergency','OPD'],beds:'200',r:'4.3',p:'10622',e:false},
+];
+function renderHosps(){
+  document.getElementById('hosplist').innerHTML=HOSPS.map(h=>`
+    <div class="hcard">
+      <div class="htop">
+        <div class="hico">${h.i}</div>
+        <div><div class="hnm">${h.n}</div><div class="htp">${h.t}</div><div class="had">📍 ${h.a}</div></div>
+      </div>
+      <div class="hbgs">${h.b.map(x=>`<span class="hbg${x.includes('Emergency')?' e':''}">${x}</span>`).join('')}</div>
+      <div class="hfoot">
+        <div class="hstat"><strong>${h.beds}</strong>Beds</div>
+        <div class="hstat"><strong>★ ${h.r}</strong>Rating</div>
+        <div class="hstat"><strong>${h.p}</strong>Hotline</div>
+        <button class="hcall" onclick="toast('📞 ${h.p} — ${h.n}')">📞 Call</button>
+      </div>
+    </div>`).join('');
+}
+
+/* ══════════════════════════════════════════════════════
+   MEDICINE
+══════════════════════════════════════════════════════ */
+const MDB=[
+  {nm:'Napa / Paracetamol',gn:'Paracetamol',ct:'Analgesic/Antipyretic',ic:'💊',ad:'500mg–1g every 4-6h (max 4g/day)',cd:'10-15mg/kg every 4-6h',use:'Fever, headache, mild pain',warn:'⚠️ Avoid alcohol. Max dose: 4g/day. Liver disease: consult doctor.',av:'Beximco, Square, ACI — widely available'},
+  {nm:'ORS (Oral Rehydration Salt)',gn:'Na+Glucose+KCl',ct:'Electrolyte Supplement',ic:'🧂',ad:'200-400ml after each loose stool',cd:'50-100ml after each stool',use:'Diarrhea, dehydration, cholera',warn:'✅ Safe all ages. 1 sachet in 1L clean water.',av:'OR Saline — govt hospitals & pharmacies'},
+  {nm:'Amoxicillin',gn:'Amoxicillin Trihydrate',ct:'Antibiotic (Penicillin)',ic:'🔵',ad:'250-500mg every 8h (PRESCRIPTION)',cd:'25-50mg/kg/day divided',use:'Bacterial infections — throat, ear, UTI',warn:'⚠️ PRESCRIPTION. Check penicillin allergy. Complete full course.',av:'Moxacil, Amoclan — Square, ACME'},
+  {nm:'Omeprazole (Losec)',gn:'Omeprazole',ct:'Proton Pump Inhibitor',ic:'🟡',ad:'20mg once daily before breakfast',cd:'Consult pediatrician',use:'Acidity, GERD, gastric ulcer',warn:'Long-term: consult doctor. Short-term OTC relief safe.',av:'Losectil, Seclo — widely available'},
+  {nm:'Metronidazole (Flagyl)',gn:'Metronidazole',ct:'Antibiotic/Antiprotozoal',ic:'🟢',ad:'400-500mg 3x daily (PRESCRIPTION)',cd:'7.5mg/kg 3x daily',use:'Amoebic dysentery, dental, bacterial',warn:'⚠️ AVOID ALCOHOL. Prescription required.',av:'Amodis, Metronid — widely available'},
+];
+
+async function searchMed(){
+  const q=document.getElementById('medq').value.trim();
+  if(!q){toast(lang==='bn'?'⚠️ ওষুধের নাম লিখুন':'⚠️ Enter medicine name');return;}
+  const res=document.getElementById('medres');
+  // Local DB first
+  const local=MDB.filter(m=>m.nm.toLowerCase().includes(q.toLowerCase())||m.gn.toLowerCase().includes(q.toLowerCase()));
+  if(local.length){res.innerHTML=local.map(renderMed).join('');return;}
+  res.innerHTML='<div style="color:var(--t3);font-size:13px;padding:10px">🔍 AI searching...</div>';
+  const MED_SYSTEM=`You are a pharmacist assistant for Bangladesh. Return ONLY valid JSON for the medicine, no markdown, no explanation.
+JSON format: {"nm":"Brand Name (Generic)","gn":"Generic Name","ct":"Drug Category","ic":"💊","ad":"Adult dose with frequency","cd":"Child dose","use":"What it treats","warn":"⚠️ Important warnings, interactions, Rx status","av":"Available brands in Bangladesh"}
+Include Bangladesh-specific brands. Flag if prescription required.`;
+  try{
+    const d=await callAI({model:'claude-sonnet-4-20250514',max_tokens:600,system:MED_SYSTEM,
+      messages:[{role:'user',content:`Medicine: ${q}\nContext: Bangladesh market. Return JSON only.`}]});
+    const rawText = Array.isArray(d.content)
+      ? d.content.filter(b=>b.type==='text'&&b.text).map(b=>b.text).join('').trim()
+      : (typeof d.content==='string' ? d.content : '');
+    const cleaned = rawText.replace(/\`\`\`json|\`\`\`/gi,'').trim();
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+    if(!jsonMatch) throw new Error('no json');
+    const m=JSON.parse(jsonMatch[0]);
+    res.innerHTML=renderMed(m);
+  }catch(e){
+    if(e.message==='NO_API_KEY'){
+      res.innerHTML=`<div class="errrow">⚙️ API Key required. Click ⚙️ in footer.</div>`;
+    } else {
+      res.innerHTML=`<div class="errrow">${lang==='bn'?'পাওয়া যায়নি। Chat এ জিজ্ঞেস করুন।':'Not found. Ask in Chat tab.'}</div>`;
+    }
+  }
+}
+
+function renderMed(m){
+  return `<div class="mcard">
+    <div class="mhdr"><div class="mico">${m.ic||'💊'}</div><div><div class="mnm">${m.nm}</div><div class="mgn">${m.gn}</div><div class="mct">${m.ct}</div></div></div>
+    <div class="mrow"><span class="ml">🎯 Used for</span><span class="mv">${m.use}</span></div>
+    <div class="mrow"><span class="ml">💊 Adult dose</span><span class="mv">${m.ad}</span></div>
+    <div class="mrow"><span class="ml">👶 Child dose</span><span class="mv">${m.cd}</span></div>
+    <div class="mrow"><span class="ml">🏪 Available</span><span class="mv">${m.av||'—'}</span></div>
+    <div class="mwrn">${m.warn}</div>
+    <button onclick="askChat('Tell me more about ${m.nm}: side effects, interactions, pregnancy safety Bangladesh context')" style="margin-top:9px;width:100%;padding:9px;border-radius:10px;background:rgba(189,147,249,0.07);border:1px solid rgba(189,147,249,0.18);color:var(--violet);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">💬 ${lang==='bn'?'Chat এ বিস্তারিত':'More details in Chat'} →</button>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════════════════
+   HEALTH TOOLS
+══════════════════════════════════════════════════════ */
+function showTool(type){
+  const d=document.getElementById('tooldet');
+  if(type==='bmi')d.innerHTML=`<div class="tool-sub"><h3>⚖️ BMI Calculator</h3><div class="crow2"><div class="cgrp"><div class="clbl">Weight (kg)</div><input class="cinp" id="bmiw" type="number" placeholder="65"></div><div class="cgrp"><div class="clbl">Height (cm)</div><input class="cinp" id="bmir" type="number" placeholder="170"></div><button class="cbtn" onclick="calcBMI()">Calculate</button></div><div class="cres" id="bmir2"></div></div>`;
+  if(type==='bp')d.innerHTML=`<div class="tool-sub"><h3>🩺 Blood Pressure Analyzer</h3><div class="crow2"><div class="cgrp"><div class="clbl">Systolic (mmHg)</div><input class="cinp" id="bps" type="number" placeholder="120"></div><div class="cgrp"><div class="clbl">Diastolic (mmHg)</div><input class="cinp" id="bpd" type="number" placeholder="80"></div><button class="cbtn" onclick="calcBP()">Analyze</button></div><div class="cres" id="bpr"></div></div>`;
+  if(type==='sugar')d.innerHTML=`<div class="tool-sub"><h3>🩸 Blood Sugar Analyzer</h3><div class="crow2"><div class="cgrp"><div class="clbl">Blood Sugar (mg/dL)</div><input class="cinp" id="sgv" type="number" placeholder="100"></div><div class="cgrp"><div class="clbl">Timing</div><select class="cinp" id="sgt"><option value="f">Fasting</option><option value="p">Post-meal (2hr)</option><option value="r">Random</option></select></div><button class="cbtn" onclick="calcSugar()">Analyze</button></div><div class="cres" id="sgr"></div></div>`;
+  if(type==='water')d.innerHTML=`<div class="tool-sub"><h3>💧 Daily Water Calculator</h3><div class="crow2"><div class="cgrp"><div class="clbl">Weight (kg)</div><input class="cinp" id="wtw" type="number" placeholder="65"></div><div class="cgrp"><div class="clbl">Activity</div><select class="cinp" id="wta"><option value="35">Sedentary</option><option value="40">Moderate</option><option value="50">Very active</option></select></div><button class="cbtn" onclick="calcWater()">Calculate</button></div><div class="cres" id="wtr"></div></div>`;
+}
+
+function calcBMI(){const w=+document.getElementById('bmiw')?.value,h=+document.getElementById('bmir')?.value/100;if(!w||!h)return;const b=(w/(h*h)).toFixed(1),cat=b<18.5?'Underweight 🟡':b<25?'Normal Weight ✅':b<30?'Overweight 🟠':'Obese 🔴';const el=document.getElementById('bmir2');el.style.display='block';el.innerHTML=`BMI: <strong style="color:var(--arc)">${b}</strong> — ${cat}`;}
+function calcBP(){const s=+document.getElementById('bps')?.value,d=+document.getElementById('bpd')?.value;if(!s||!d)return;const cat=s<120&&d<80?'Normal ✅':s<130&&d<80?'Elevated 🟡':s<140||d<90?'High Stage 1 🟠':'High Stage 2 🔴';const el=document.getElementById('bpr');el.style.display='block';el.innerHTML=`BP: <strong style="color:var(--arc)">${s}/${d} mmHg</strong> — ${cat}`;}
+function calcSugar(){const v=+document.getElementById('sgv')?.value,t=document.getElementById('sgt')?.value;if(!v)return;let cat;if(t==='f')cat=v<70?'Low (Hypoglycemia) 🔴':v<100?'Normal ✅':v<126?'Pre-diabetes 🟡':'Diabetes 🔴';else if(t==='p')cat=v<140?'Normal ✅':v<200?'Pre-diabetes 🟡':'Diabetes 🔴';else cat=v<140?'Normal ✅':v<200?'Borderline 🟡':'High 🔴';const el=document.getElementById('sgr');el.style.display='block';el.innerHTML=`Sugar: <strong style="color:var(--arc)">${v} mg/dL</strong> — ${cat}`;}
+function calcWater(){const w=+document.getElementById('wtw')?.value,a=+document.getElementById('wta')?.value||35;if(!w)return;const ml=Math.round(w*a);const el=document.getElementById('wtr');el.style.display='block';el.innerHTML=`Daily: <strong style="color:var(--arc)">${ml}ml</strong> (~${Math.round(ml/250)} glasses of water)`;}
+
+/* ══════════════════════════════════════════════════════
+   UI HELPERS
+══════════════════════════════════════════════════════ */
+function addUser(text){
+  const msgs=document.getElementById('msgs'),typ=document.getElementById('typing');
+  const row=document.createElement('div'); row.className='mrow me';
+  row.innerHTML=`<div class="av me">👤</div><div class="mbody"><div class="bubble me">${esc(text)}</div></div>`;
+  msgs.insertBefore(row,typ); scrollB();
+}
+
+function addBot(text){
+  const msgs=document.getElementById('msgs'),typ=document.getElementById('typing');
+  const isE=ERE.test(text);
+  const row=document.createElement('div'); row.className='mrow';
+  row.innerHTML=`<div class="av bot"></div><div class="mbody">${isE?`<div class="emg-card">🚨 ${lang==='bn'?'জরুরি অবস্থা! এখনই ৯৯৯ কল করুন!':'EMERGENCY! Call 999 immediately!'}</div>`:''}<div class="bubble bot">${fmt(text)}</div></div>`;
+  msgs.insertBefore(row,typ); scrollB();
+}
+
+function addErr(msg){
+  const msgs=document.getElementById('msgs'),typ=document.getElementById('typing');
+  const d=document.createElement('div'); d.className='errrow'; d.textContent='⚠️ '+msg;
+  msgs.insertBefore(d,typ); scrollB();
+}
+
+function addQuickActions(userQuery){
+  const msgs=document.getElementById('msgs'),typ=document.getElementById('typing');
+  const d=document.createElement('div');
+  d.style.cssText='display:flex;gap:6px;flex-wrap:wrap;padding:6px 0 10px 44px';
+  const enc=encodeURIComponent(userQuery.slice(0,60));
+  d.innerHTML=`
+    <a href="./doctors/search.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(26,86,219,.12);border:1px solid rgba(26,86,219,.25);color:#60a5fa;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none">👨‍⚕️ Find Doctor</a>
+    <a href="./treatments/index.html?q=${enc}" style="display:inline-flex;align-items:center;gap:5px;background:rgba(13,148,136,.12);border:1px solid rgba(13,148,136,.25);color:#5eead4;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none">📋 Treatment</a>
+    <a href="./drugs/index.html?q=${enc}" style="display:inline-flex;align-items:center;gap:5px;background:rgba(217,119,6,.12);border:1px solid rgba(217,119,6,.25);color:#fcd34d;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none">💊 Drug Info</a>
+    <a href="./patients/appointments.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);color:#a78bfa;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none">📅 Book Appointment</a>`;
+  msgs.insertBefore(d,typ); scrollB();
+}
+
+function setTyping(on,lbl){
+  const btn=document.getElementById('sendbtn'),ty=document.getElementById('typing');
+  btn.disabled=on; btn.textContent=on?'⏳':'➤';
+  ty.style.display=on?'flex':'none';
+  if(lbl)document.getElementById('tlbl').textContent=lbl;
+  if(on)scrollB();
+}
+
+let ebarT;
+function showEbar(on){
+  const b=document.getElementById('ebar'); b.classList.toggle('on',on);
+  if(on){clearTimeout(ebarT);ebarT=setTimeout(()=>b.classList.remove('on'),30000);}
+}
+
+function clrChat(){
+  if(!confirm(T[lang].clrTxt))return;
+  hist=[];
+  const msgs=document.getElementById('msgs'),typ=document.getElementById('typing');
+  while(msgs.firstChild&&msgs.firstChild!==typ)msgs.removeChild(msgs.firstChild);
+  showEbar(false); addBot(T[lang].welcome);
+}
+
+function gsearch(){
+  const q=prompt(lang==='bn'?'Medical topic লিখুন (AI web search করবে):':'Enter medical topic (AI will search web):');
+  if(!q) return;
+  // Switch to chat tab and send with web search context
+  goTab('chat',null);
+  const webQuery = lang==='bn'
+    ? `[🌐 Web Search] ${q} — Bangladesh এর context এ latest information দাও।`
+    : `[🌐 Web Search] ${q} — provide latest information for Bangladesh context.`;
+  send(webQuery);
+}
+
+function openSOS(){document.getElementById('sosmod').classList.add('on');}
+function closeSOS(){document.getElementById('sosmod').classList.remove('on');}
+function askChat(t){goTab('chat',null);send(t);}
+
+function scrollB(){const c=document.getElementById('msgs');setTimeout(()=>c.scrollTop=c.scrollHeight,60);}
+
+function fmt(t){
+  t=t.replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--t1);font-weight:800">$1</strong>');
+  t=t.replace(/\*(.*?)\*/g,'<em style="color:var(--t2)">$1</em>');
+  t=t.replace(/^#{1,3}\s(.+)/gm,'<div style="font-size:14px;font-weight:800;color:var(--arc);margin:8px 0 4px;letter-spacing:-0.3px">$1</div>');
+  t=t.replace(/^(\d+)\.\s(.+)/gm,'<div style="padding:3px 0"><span style="color:var(--arc);font-weight:800;margin-right:7px;font-family:DM Mono,monospace">$1.</span>$2</div>');
+  t=t.replace(/^[•\-]\s(.+)/gm,'<div style="padding:2px 0;padding-left:4px">• $1</div>');
+  t=t.replace(/\n/g,'<br>');
+  return t;
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2800);}
+
+/* Keyboard */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeSOS();
+  if(e.key==='Enter'&&!e.shiftKey&&document.activeElement.id==='inp'){e.preventDefault();send();}
+});
+document.getElementById('sosmod').addEventListener('click',function(e){if(e.target===this)closeSOS();});
+document.getElementById('sendbtn').addEventListener('click',()=>send());
+</script>
+<!-- ══ API KEY MODAL ══ -->
+<div id="keyModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(6px);">
+  <div style="background:linear-gradient(135deg,#151a30,#1a2040);border:1px solid rgba(0,212,255,.25);border-radius:20px;padding:2rem;width:90%;max-width:440px;box-shadow:0 0 60px rgba(0,100,255,.2);">
+    <div style="text-align:center;margin-bottom:1.25rem;">
+      <div style="font-size:2rem;margin-bottom:.4rem;">🔑</div>
+      <h2 style="color:#fff;font-size:1.1rem;font-weight:700;margin-bottom:.3rem;">Anthropic API Key Setup</h2>
+      <p style="color:rgba(255,255,255,.55);font-size:.82rem;">AI chat কাজ করতে Anthropic API key দরকার। এটা আপনার browser এ locally save হবে।</p>
+    </div>
+    <div style="margin-bottom:.75rem;">
+      <input id="keyInput" type="password" placeholder="sk-ant-api03-..." style="width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.07);border:1.5px solid rgba(0,212,255,.3);border-radius:10px;color:#fff;font-size:.9rem;font-family:inherit;outline:none;" oninput="document.getElementById('keyErr').textContent=''">
+      <div id="keyErr" style="color:#ff6b6b;font-size:.78rem;margin-top:.35rem;min-height:1rem;"></div>
+    </div>
+    <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-bottom:1rem;">
+      <button onclick="hideKeyModal()" style="padding:.6rem 1.2rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:9px;color:rgba(255,255,255,.7);cursor:pointer;font-size:.88rem;font-family:inherit;">Cancel</button>
+      <button onclick="submitApiKey()" style="padding:.6rem 1.4rem;background:linear-gradient(135deg,#00d4ff,#0096c7);border:none;border-radius:9px;color:#000;font-weight:700;cursor:pointer;font-size:.88rem;font-family:inherit;">Save & Connect</button>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:.85rem;font-size:.76rem;color:rgba(255,255,255,.45);line-height:1.5;">
+      📌 <strong style="color:rgba(255,255,255,.6);">Key পাবেন:</strong> <a href="https://console.anthropic.com" target="_blank" style="color:#00d4ff;">console.anthropic.com</a> → API Keys → Create Key<br>
+      🔒 Key শুধু আপনার browser এ save হয়, কোথাও পাঠানো হয় না।
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

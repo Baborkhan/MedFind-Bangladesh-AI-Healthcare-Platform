@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Login — MedFind Bangladesh</title>
+<meta name="description" content="Secure login for MedFind Bangladesh — Patients, Doctors, Hospitals, Admins"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--ink:#05101e;--blue:#1a56db;--teal:#0d9488;--teal-l:#14b8a6;--t1:#f0f9ff;--t2:#93c5fd;--t3:#475569;--border:rgba(255,255,255,.07);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--t1);min-height:100vh;display:grid;grid-template-columns:1.1fr .9fr;}
+/* LEFT */
+.left{padding:2.5rem 3rem;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(160deg,#07172b 0%,#05101e 100%);position:relative;overflow:hidden;}
+.left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 20% 50%,rgba(26,86,219,.18),transparent 65%),radial-gradient(ellipse 55% 50% at 80% 20%,rgba(13,148,136,.14),transparent 60%);pointer-events:none;}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:50px 50px;}
+.logo{display:flex;align-items:center;gap:.9rem;position:relative;z-index:1;}
+.logo img{width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(13,148,136,.5));}
+.logo-name{font-size:1.6rem;font-weight:900;}.logo-name .m{color:#fff;}.logo-name .f{color:var(--teal-l);}
+.logo-tag{font-size:.6rem;color:var(--t3);font-weight:600;letter-spacing:.3px;}
+.hero{flex:1;display:flex;flex-direction:column;justify-content:center;padding:1.5rem 0;position:relative;z-index:1;}
+.badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(13,148,136,.12);border:1px solid rgba(13,148,136,.25);border-radius:30px;padding:.38rem 1rem;font-size:.7rem;font-weight:700;color:var(--teal-l);margin-bottom:1.2rem;width:fit-content;}
+.badge-dot{width:6px;height:6px;background:var(--teal-l);border-radius:50%;animation:pulse 2s infinite;box-shadow:0 0 6px var(--teal-l);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.htitle{font-size:2.8rem;font-weight:900;line-height:1.08;letter-spacing:-.03em;margin-bottom:1rem;}
+.htitle em{font-style:normal;background:linear-gradient(135deg,#38bdf8,#5eead4,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hdesc{font-size:.92rem;color:rgba(240,249,255,.65);line-height:1.7;max-width:390px;margin-bottom:1.5rem;}
+.stats{display:flex;gap:0;border-top:1px solid var(--border);padding-top:1.5rem;}
+.stat{flex:1;padding-right:1.5rem;}
+.stat-n{font-size:1.7rem;font-weight:800;background:linear-gradient(135deg,#f0f9ff,#93c5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-l{font-size:.65rem;color:var(--t3);font-weight:600;}
+/* RIGHT */
+.right{display:flex;align-items:center;justify-content:center;padding:2rem;background:#060f1d;position:relative;overflow-y:auto;}
+.right::before{content:'';position:absolute;left:0;top:8%;bottom:8%;width:1px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.06) 35%,rgba(255,255,255,.06) 65%,transparent);}
+.card{width:100%;max-width:420px;}
+.card-title{font-size:1.85rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.3rem;}
+.card-sub{font-size:.85rem;color:rgba(240,249,255,.45);margin-bottom:1.4rem;}
+/* ROLE TABS */
+.role-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.3rem;margin-bottom:.9rem;}
+.role-btn{border:1.5px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);border-radius:10px;padding:.55rem .3rem;text-align:center;cursor:pointer;transition:.22s;position:relative;overflow:hidden;}
+.role-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#1a56db,#0d9488);opacity:0;transition:.22s;}
+.role-btn:hover{border-color:rgba(13,148,136,.35);}
+.role-btn.on{border-color:transparent;box-shadow:0 0 0 1.5px rgba(13,148,136,.5);}
+.role-btn.on::after{opacity:1;}
+.role-inner{position:relative;z-index:1;}
+.role-icon{font-size:.95rem;display:block;margin-bottom:.18rem;}
+.role-name{font-size:.63rem;font-weight:700;color:rgba(240,249,255,.6);}
+.role-btn.on .role-name{color:#fff;}
+/* hidden superadmin */
+.role-btn[data-r="superadmin"]{display:none;}
+.role-btn[data-r="superadmin"].unlocked{display:block;}
+.sa-hint{display:none;font-size:.63rem;color:rgba(13,148,136,.8);text-align:center;margin:-.7rem 0 .7rem;font-family:'JetBrains Mono',monospace;}
+.sa-hint.show{display:block;}
+/* ALERT */
+.alert{display:none;align-items:center;gap:.55rem;padding:.62rem .88rem;border-radius:9px;font-size:.78rem;margin-bottom:.8rem;}
+.alert.show{display:flex;}
+.alert.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5;}
+.alert.ok{background:rgba(13,148,136,.08);border:1px solid rgba(13,148,136,.2);color:#5eead4;}
+.alert.warn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:#fcd34d;}
+/* GOOGLE BTN */
+.g-btn{width:100%;padding:.8rem;background:#fff;border:none;border-radius:11px;color:#1f1f1f;font-size:.9rem;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.65rem;box-shadow:0 4px 18px rgba(0,0,0,.22);transition:.22s;margin-bottom:.5rem;}
+.g-btn:hover{background:#f3f4f6;transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.28);}
+.g-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.g-icon{width:19px;height:19px;flex-shrink:0;}
+.g-note{text-align:center;font-size:.65rem;color:var(--t3);margin-bottom:.9rem;display:flex;align-items:center;justify-content:center;gap:.35rem;}
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:.6rem;color:var(--t3);font-size:.72rem;margin:.85rem 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.055);}
+/* METHOD TABS */
+.mtabs{display:flex;gap:5px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:4px;margin-bottom:.88rem;}
+.mtab{flex:1;padding:.46rem;border:none;background:transparent;border-radius:8px;color:rgba(240,249,255,.38);font-size:.75rem;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:.38rem;}
+.mtab:hover{color:rgba(240,249,255,.65);}
+.mtab.on{background:linear-gradient(135deg,rgba(26,86,219,.4),rgba(13,148,136,.4));color:var(--teal-l);}
+/* FORM */
+.fgroup{margin-bottom:.82rem;}
+.flabel{font-size:.7rem;font-weight:700;color:rgba(240,249,255,.55);display:block;margin-bottom:.32rem;}
+.fw{position:relative;}
+.ficon{position:absolute;left:.88rem;top:50%;transform:translateY(-50%);font-size:.78rem;color:var(--t3);pointer-events:none;transition:.2s;}
+.finput{width:100%;padding:.76rem 1rem .76rem 2.5rem;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);border-radius:10px;color:var(--t1);font-size:.875rem;font-family:'Outfit',sans-serif;outline:none;transition:.22s;}
+.finput::placeholder{color:var(--t3);}
+.finput:focus{background:rgba(255,255,255,.06);border-color:rgba(13,148,136,.5);box-shadow:0 0 0 3px rgba(13,148,136,.09);}
+.fw:focus-within .ficon{color:var(--teal-l);}
+.eye-btn{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--t3);cursor:pointer;font-size:.78rem;}
+.eye-btn:hover{color:var(--t1);}
+.forgot-link{display:flex;justify-content:flex-end;margin-top:.28rem;}
+.forgot-link a{font-size:.72rem;color:var(--teal-l);font-weight:600;text-decoration:none;}
+/* OTP PANEL */
+.send-btn{width:100%;padding:.7rem;background:rgba(13,148,136,.13);border:1.5px solid rgba(13,148,136,.32);border-radius:10px;color:var(--teal-l);font-size:.86rem;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:.22s;display:flex;align-items:center;justify-content:center;gap:.48rem;}
+.send-btn:hover:not(:disabled){background:rgba(13,148,136,.22);}
+.send-btn:disabled{opacity:.5;cursor:not-allowed;}
+.otp-box{background:rgba(13,148,136,.05);border:1px solid rgba(13,148,136,.15);border-radius:11px;padding:.85rem;margin-top:.8rem;display:none;}
+.otp-box.open{display:block;animation:fadeIn .28s ease;}
+.otp-label{font-size:.72rem;color:var(--teal-l);font-weight:600;margin-bottom:.55rem;display:flex;align-items:center;gap:.38rem;}
+.otp-digits{display:flex;gap:.4rem;}
+.otp-d{width:42px;height:46px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.045);border-radius:9px;color:#fff;font-size:1.15rem;font-weight:700;text-align:center;font-family:'JetBrains Mono',monospace;outline:none;transition:.2s;}
+.otp-d:focus{border-color:var(--teal);background:rgba(13,148,136,.1);}
+.otp-d.ok{border-color:var(--teal);}
+.otp-d.bad{border-color:#ef4444;}
+.otp-meta{display:flex;align-items:center;gap:.5rem;margin-top:.48rem;font-size:.68rem;color:var(--t3);}
+.otp-timer{color:var(--teal-l);font-family:'JetBrains Mono',monospace;font-weight:700;}
+.resend-btn{margin-left:auto;background:none;border:none;color:var(--teal-l);font-size:.68rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;}
+.resend-btn:disabled{opacity:.35;cursor:not-allowed;}
+/* MAIN BTN */
+.main-btn{width:100%;padding:.85rem;background:linear-gradient(135deg,#1a56db,#0d9488);border:none;border-radius:11px;color:#fff;font-size:.92rem;font-weight:800;font-family:'Outfit',sans-serif;cursor:pointer;transition:.28s;box-shadow:0 8px 22px rgba(26,86,219,.25);margin-top:.75rem;display:flex;align-items:center;justify-content:center;gap:.55rem;}
+.main-btn:hover{transform:translateY(-1px);box-shadow:0 14px 28px rgba(13,148,136,.3);}
+.main-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none;}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* PAYMENT */
+.pay-row{display:flex;align-items:center;gap:.42rem;flex-wrap:wrap;justify-content:center;margin-top:.85rem;padding:.58rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:9px;}
+.pay-lbl{font-size:.57rem;color:var(--t3);width:100%;text-align:center;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.15rem;}
+.pbadge{font-size:.63rem;font-weight:700;padding:.15rem .45rem;border-radius:5px;}
+.pbadge.bk{background:rgba(224,15,64,.13);color:#ff6b8a;border:1px solid rgba(224,15,64,.22);}
+.pbadge.ng{background:rgba(245,130,32,.1);color:#fbbf24;border:1px solid rgba(245,130,32,.22);}
+.pbadge.rk{background:rgba(130,27,196,.1);color:#c084fc;border:1px solid rgba(130,27,196,.22);}
+.pbadge.cd{background:rgba(26,86,219,.1);color:#93c5fd;border:1px solid rgba(26,86,219,.22);}
+.pbadge.ssl{background:rgba(13,148,136,.1);color:#5eead4;border:1px solid rgba(13,148,136,.22);}
+/* DEMO */
+.demo-box{background:rgba(255,255,255,.016);border:1px solid rgba(255,255,255,.05);border-radius:9px;padding:.65rem;margin-top:.82rem;}
+.demo-lbl{font-size:.6rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.42rem;}
+.demo-row{display:flex;justify-content:space-between;align-items:center;padding:.16rem 0;border-bottom:1px solid rgba(255,255,255,.038);}
+.demo-row:last-child{border:none;}
+.demo-role{font-size:.67rem;color:var(--t3);}
+.demo-cred{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--teal-l);background:rgba(13,148,136,.09);padding:.14rem .42rem;border-radius:5px;cursor:pointer;border:1px solid rgba(13,148,136,.16);}
+.demo-cred:hover{background:rgba(13,148,136,.18);}
+/* FOOTER */
+.reg-row{text-align:center;font-size:.8rem;color:rgba(240,249,255,.4);margin-top:.88rem;}
+.reg-row a{color:var(--teal-l);font-weight:700;text-decoration:none;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+/* RESPONSIVE */
+@media(max-width:900px){body{grid-template-columns:1fr;}.left{display:none;}.right{padding:1.5rem;}}
+@media(max-width:480px){.right{padding:1rem;}.card{padding:0;}.role-grid{grid-template-columns:repeat(3,1fr);gap:.25rem;}.role-btn{padding:.45rem .2rem;}.role-name{font-size:.58rem;}.otp-d{width:36px;height:40px;font-size:1rem;}.main-btn{padding:.75rem;}.card-title{font-size:1.5rem;}}
+</style>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Login — MedFind Bangladesh">
+  <meta property="og:description" content="Secure login for MedFind Bangladesh — Patients, Doctors, Hospitals, Admins">
+  <meta property="og:image" content="https://medfind-bangladesh.web.app/assets/medfind-logo.png">
+  <meta property="og:site_name" content="MedFind Bangladesh">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Login — MedFind Bangladesh">
+  <meta name="twitter:description" content="Secure login for MedFind Bangladesh — Patients, Doctors, Hospitals, Admins">
+  <link rel="icon" type="image/png" href="../assets/medfind-logo.png">
+  <link rel="apple-touch-icon" href="../assets/medfind-logo.png">
+</head>
+<body>
+<!-- LEFT -->
+<div class="left">
+  <div class="grid-bg"></div>
+  <div class="logo" id="logoBox" style="cursor:pointer;">
+    <img src="../assets/medfind-logo.png" alt="MedFind">
+    <div><div class="logo-name"><span class="m">Med</span><span class="f">Find</span></div><div class="logo-tag">CARE YOU CAN TRUST</div></div>
+  </div>
+  <div class="hero">
+    <div class="badge"><div class="badge-dot"></div>Bangladesh's #1 Healthcare Platform</div>
+    <div class="htitle">Your Health,<br><em>Our Priority</em></div>
+    <div class="hdesc">Connect with 2,400+ BMDC-verified doctors, book appointments, get lab tests, and access telemedicine — all in one secure place.</div>
+    <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem;">
+      <div style="display:flex;align-items:center;gap:.8rem;padding:.55rem .85rem;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.042);border-radius:10px;font-size:.8rem;color:rgba(240,249,255,.68);">
+        <span style="width:30px;height:30px;background:rgba(26,86,219,.18);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;color:#93c5fd;"><i class="fas fa-user-md"></i></span>
+        <b style="color:#e0f2fe;">2,400+</b> BMDC Verified Specialist Doctors
+      </div>
+      <div style="display:flex;align-items:center;gap:.8rem;padding:.55rem .85rem;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.042);border-radius:10px;font-size:.8rem;color:rgba(240,249,255,.68);">
+        <span style="width:30px;height:30px;background:rgba(13,148,136,.18);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;color:#5eead4;"><i class="fas fa-hospital"></i></span>
+        <b style="color:#e0f2fe;">800+</b> Registered Hospitals &amp; Clinics
+      </div>
+      <div style="display:flex;align-items:center;gap:.8rem;padding:.55rem .85rem;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.042);border-radius:10px;font-size:.8rem;color:rgba(240,249,255,.68);">
+        <span style="width:30px;height:30px;background:rgba(139,92,246,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;color:#c4b5fd;"><i class="fas fa-shield-halved"></i></span>
+        <b style="color:#e0f2fe;">5% Commission</b> Model — Fair &amp; Transparent
+      </div>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="c1">0</div><div class="stat-l">Patients Served</div></div>
+    <div class="stat"><div class="stat-n" id="c2">0</div><div class="stat-l">Doctors</div></div>
+    <div class="stat"><div class="stat-n" id="c3">0</div><div class="stat-l">Hospitals</div></div>
+  </div>
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+  <div class="card">
+    <div class="card-title">Welcome Back 👋</div>
+    <div class="card-sub">Sign in to your MedFind account</div>
+
+    <!-- ROLE -->
+    <div class="role-grid" id="roleGrid">
+      <div class="role-btn on" data-r="patient" onclick="setRole('patient',this)"><div class="role-inner"><span class="role-icon"><i class="fas fa-user"></i></span><div class="role-name">Patient</div></div></div>
+      <div class="role-btn" data-r="doctor" onclick="setRole('doctor',this)"><div class="role-inner"><span class="role-icon"><i class="fas fa-stethoscope"></i></span><div class="role-name">Doctor</div></div></div>
+      <div class="role-btn" data-r="hospital_admin" onclick="setRole('hospital_admin',this)"><div class="role-inner"><span class="role-icon"><i class="fas fa-hospital"></i></span><div class="role-name">Hospital</div></div></div>
+      <div class="role-btn" data-r="pharmacy_admin" onclick="setRole('pharmacy_admin',this)"><div class="role-inner"><span class="role-icon"><i class="fas fa-pills"></i></span><div class="role-name">Pharmacy</div></div></div>
+      <div class="role-btn" data-r="lab_admin" onclick="setRole('lab_admin',this)"><div class="role-inner"><span class="role-icon"><i class="fas fa-flask"></i></span><div class="role-name">Lab</div></div></div>
+      <div class="role-btn" data-r="admin" onclick="setRole('admin',this)"><div class="role-inner"><span class="role-icon"><i class="fas fa-user-shield"></i></span><div class="role-name">Admin</div></div></div>
+      <div class="role-btn" data-r="superadmin" onclick="setRole('superadmin',this)"><div class="role-inner"><span class="role-icon"><i class="fas fa-shield-halved"></i></span><div class="role-name">Super</div></div></div>
+    </div>
+    <div class="sa-hint" id="saHint">🔐 Dev access — Ahsanul Yamin</div>
+
+    <!-- ALERTS -->
+    <div class="alert err" id="alertErr"><i class="fas fa-circle-exclamation"></i><span id="errMsg"></span></div>
+    <div class="alert ok"  id="alertOk"><i class="fas fa-circle-check"></i><span id="okMsg"></span></div>
+    <div class="alert warn" id="alertWarn"><i class="fas fa-triangle-exclamation"></i><span id="warnMsg"></span></div>
+
+    <!-- GOOGLE -->
+    <button class="g-btn" id="gBtn" onclick="googleLogin()">
+      <svg class="g-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continue with Google
+    </button>
+    <div class="g-note"><i class="fas fa-shield-halved" style="color:#34A853;font-size:.58rem;"></i> Secured by Firebase — no password stored</div>
+
+    <div class="divider">or sign in with email</div>
+
+    <!-- METHOD TABS -->
+    <div class="mtabs">
+      <button class="mtab on" id="tabPW" onclick="switchTab('pw')"><i class="fas fa-lock"></i> Password</button>
+      <button class="mtab" id="tabOTP" onclick="switchTab('otp')"><i class="fas fa-mobile-alt"></i> Email OTP</button>
+    </div>
+
+    <!-- OTP PANEL -->
+    <div id="panelOTP" style="display:none;">
+      <div class="fgroup">
+        <label class="flabel" for="otpEmail">Email Address</label>
+        <div class="fw"><i class="fas fa-envelope ficon"></i><input class="finput" type="email" id="otpEmail" placeholder="your@email.com" autocomplete="email" inputmode="email"></div>
+      </div>
+      <button class="send-btn" id="sendBtn" onclick="sendOTP()"><i class="fas fa-paper-plane"></i><span id="sendTxt">Send OTP</span></button>
+      <div class="otp-box" id="otpBox">
+        <div class="otp-label"><i class="fas fa-key"></i> Enter the 6-digit code</div>
+        <div class="otp-digits" id="otpDigits">
+          <input class="otp-d" type="text" maxlength="1" data-i="0" inputmode="numeric" autocomplete="one-time-code">
+          <input class="otp-d" type="text" maxlength="1" data-i="1" inputmode="numeric">
+          <input class="otp-d" type="text" maxlength="1" data-i="2" inputmode="numeric">
+          <input class="otp-d" type="text" maxlength="1" data-i="3" inputmode="numeric">
+          <input class="otp-d" type="text" maxlength="1" data-i="4" inputmode="numeric">
+          <input class="otp-d" type="text" maxlength="1" data-i="5" inputmode="numeric">
+        </div>
+        <div class="otp-meta">
+          <i class="fas fa-clock"></i>
+          <span class="otp-timer" id="otpTimer">2:00</span>
+          <button class="resend-btn" id="resendBtn" disabled onclick="resendOTP()">Resend</button>
+        </div>
+        <button class="main-btn" id="verifyBtn" onclick="verifyOTP()" style="margin-top:.6rem;">
+          <span id="verifyTxt"><i class="fas fa-check-circle"></i> Verify &amp; Sign In</span>
+          <div class="spinner" id="verifySp"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- PASSWORD PANEL -->
+    <div id="panelPW">
+      <div class="fgroup">
+        <label class="flabel" for="pwEmail">Email Address</label>
+        <div class="fw"><i class="fas fa-envelope ficon"></i><input class="finput" type="email" id="pwEmail" placeholder="your@email.com" autocomplete="email"></div>
+      </div>
+      <div class="fgroup">
+        <label class="flabel" for="pwPass">Password</label>
+        <div class="fw">
+          <i class="fas fa-lock ficon"></i>
+          <input class="finput" type="password" id="pwPass" placeholder="Your password" autocomplete="current-password">
+          <button class="eye-btn" onclick="togglePW()" type="button"><i class="fas fa-eye" id="eyeIcon"></i></button>
+        </div>
+        <div class="forgot-link"><a href="#" onclick="forgotPW(event)">Forgot password?</a></div>
+      </div>
+      <button class="main-btn" id="loginBtn" onclick="passwordLogin()">
+        <span id="loginTxt"><i class="fas fa-arrow-right-to-bracket"></i> Sign In</span>
+        <div class="spinner" id="loginSp"></div>
+      </button>
+    </div>
+
+    <!-- PAYMENT BADGES -->
+    <div class="pay-row">
+      <div class="pay-lbl">Secure Payments · SSLCommerz</div>
+      <span class="pbadge bk">bKash</span><span class="pbadge ng">Nagad</span><span class="pbadge rk">Rocket</span><span class="pbadge cd">Card</span><span class="pbadge ssl">SSL</span>
+    </div>
+
+    <div class="divider">or</div>
+    <div class="reg-row">Don't have an account? <a href="register.html">Register free →</a></div>
+
+    <!-- DEMO CREDS -->
+    <div class="demo-box">
+      <div class="demo-lbl">🔑 Demo — click to fill</div>
+      <div class="demo-row"><span class="demo-role">Patient</span><code class="demo-cred" onclick="fillDemo('patient@demo.com','Patient@123','patient')">patient@demo.com / Patient@123</code></div>
+      <div class="demo-row"><span class="demo-role">Doctor</span><code class="demo-cred" onclick="fillDemo('dr.karim@medfind.com','Doctor@123','doctor')">dr.karim@medfind.com / Doctor@123</code></div>
+      <div class="demo-row" id="saRow" style="display:none;"><span class="demo-role" style="color:#5eead4;">Super Admin</span><code class="demo-cred" onclick="fillDemo('admin@medfind.com','Admin@12345','superadmin')">admin@medfind.com / Admin@12345</code></div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/firebase-config.js"></script>
+<script src="../assets/js/firestore.js"></script>
+<script>
+/* ── CONSTANTS ── */
+const DASH={superadmin:'../pages/admin/dashboard.html',admin:'../pages/admin/dashboard.html',hospital_admin:'../pages/hospital/admin.html',pharmacy_admin:'../pages/billing/pharmacy.html',lab_admin:'../pages/lab/admin.html',doctor:'../pages/doctors/console.html',patient:'../pages/patients/dashboard.html'};
+const DEMOS={'admin@medfind.com':{pw:'Admin@12345',role:'superadmin',name:'Ahsanul Yamin'},'dr.karim@medfind.com':{pw:'Doctor@123',role:'doctor',name:'Dr. Abdul Karim'},'patient@demo.com':{pw:'Patient@123',role:'patient',name:'Demo Patient'}};
+const API=(window.MEDFIND_CONFIG&&window.MEDFIND_CONFIG.API_BASE)?window.MEDFIND_CONFIG.API_BASE:(location.hostname==='localhost'||location.hostname==='127.0.0.1'?'http://127.0.0.1:8000/api/v1':'https://medfind-bangladesh-ai-healthcare-platform.onrender.com/api/v1');
+
+/* ── FIREBASE ── */
+let fbAuth=null,fbDB=null;
+try{
+  if(!firebase.apps.length)firebase.initializeApp(window.MEDFIND_FIREBASE||{});
+  fbAuth=firebase.auth();fbDB=firebase.firestore();
+  console.log('%c✅ Firebase Auth ready','color:#34d399;font-weight:bold');
+}catch(e){console.warn('Firebase init:',e);}
+
+/* ── COUNTERS ── */
+function cnt(el,n,sfx){let v=0,s=n/55;const iv=setInterval(()=>{v=Math.min(v+s,n);el.textContent=Math.round(v).toLocaleString()+sfx;if(v>=n)clearInterval(iv);},22);}
+setTimeout(()=>{cnt(document.getElementById('c1'),52000,'+');cnt(document.getElementById('c2'),2400,'+');cnt(document.getElementById('c3'),800,'+');},600);
+
+/* ── ROLE ── */
+let role='patient';
+function setRole(r,el){role=r;document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+let _lc=0,_lt=null;
+document.getElementById('logoBox').addEventListener('click',()=>{
+  _lc++;clearTimeout(_lt);_lt=setTimeout(()=>_lc=0,1800);
+  if(_lc>=5){_lc=0;const sa=document.querySelector('[data-r="superadmin"]');if(!sa.classList.contains('unlocked')){sa.classList.add('unlocked');document.getElementById('saHint').classList.add('show');document.getElementById('saRow').style.display='flex';}}
+});
+
+/* ── ALERTS ── */
+function showAlert(t,m){
+  ['alertErr','alertOk','alertWarn'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  if(t==='error'){document.getElementById('errMsg').textContent=m;document.getElementById('alertErr').classList.add('show');}
+  else if(t==='ok'){document.getElementById('okMsg').textContent=m;document.getElementById('alertOk').classList.add('show');}
+  else{document.getElementById('warnMsg').innerHTML=m;document.getElementById('alertWarn').classList.add('show');}
+}
+function clearAlerts(){['alertErr','alertOk','alertWarn'].forEach(id=>document.getElementById(id).classList.remove('show'));}
+
+/* ── SAVE & REDIRECT ── */
+async function saveAndGo(user,token){
+  // Handle JWT object from backend (has access + refresh keys)
+  const accessToken = (token && typeof token === 'object') ? (token.access || token.access_token || JSON.stringify(token)) : token;
+  // Determine the effective role
+  const effectiveRole = user.role || role || 'patient';
+  localStorage.setItem('mf_token', accessToken);
+  localStorage.setItem('mf_user', JSON.stringify({
+    ...user,
+    role: effectiveRole,
+    full_name: user.full_name || user.name || user.displayName || user.email?.split('@')[0] || 'User',
+  }));
+  // Firestore save (non-blocking)
+  if(window.MedFirestore&&window.MedFirestore.ready){
+    const uid=user.uid||user.google_id||('u_'+btoa(user.email||'x').replace(/[^a-z0-9]/gi,'').slice(0,20));
+    window.MedFirestore.saveUser(uid,{email:user.email,full_name:user.full_name||user.name||'',role:user.role,phone:user.phone||'',picture:user.picture||'',auth_provider:user.auth_provider||'unknown',isActive:true,lastLogin:window.MedFirestore.ts()}).catch(()=>{});
+    // Log login activity
+    if(fbDB)fbDB.collection('login_activity').add({userId:uid,email:user.email,role:user.role,auth_provider:user.auth_provider||'unknown',loginAt:firebase.firestore.FieldValue.serverTimestamp(),userAgent:navigator.userAgent.slice(0,120),status:'success'}).catch(()=>{});
+  }
+  const first=(user.full_name||user.name||'User').split(' ')[0];
+  showAlert('ok',`Welcome, ${first}! Redirecting...`);
+  const effectiveRole2 = user.role || role || 'patient';
+  const dest = user.dashboard || DASH[effectiveRole2] || DASH.patient;
+  // Make dest absolute if it starts with /pages/
+  const finalDest = dest.startsWith('/pages/') ? ('..' + dest) : dest;
+  setTimeout(()=>{ window.location.href = finalDest; }, 900);
+}
+
+/* ── TABS ── */
+let tab='pw';
+function switchTab(t){
+  tab=t;
+  document.getElementById('panelOTP').style.display=t==='otp'?'block':'none';
+  document.getElementById('panelPW').style.display=t==='pw'?'block':'none';
+  if(document.getElementById('tabPW')) document.getElementById('tabPW').classList.toggle('on',t==='pw');
+  if(document.getElementById('tabOTP')) document.getElementById('tabOTP').classList.toggle('on',t==='otp');
+  clearAlerts();
+}
+
+function togglePW(){const i=document.getElementById('pwPass'),ic=document.getElementById('eyeIcon');i.type=i.type==='password'?'text':'password';ic.className=i.type==='password'?'fas fa-eye':'fas fa-eye-slash';}
+function fillDemo(e,p,r){switchTab('pw');document.getElementById('pwEmail').value=e;document.getElementById('pwPass').value=p;const el=document.querySelector(`[data-r="${r}"]`);if(el)setRole(r,el);}
+
+/* ═══════════════════════════════════════════════
+   GOOGLE LOGIN
+═══════════════════════════════════════════════ */
+async function googleLogin(){
+  const btn=document.getElementById('gBtn');
+  btn.disabled=true;btn.innerHTML='<div class="spinner" style="display:block;border-color:rgba(26,86,219,.3);border-top-color:#1a56db;"></div>';
+  if(!fbAuth){showAlert('warn','Demo mode — configure firebase-config.js for real Google login');
+    setTimeout(()=>saveAndGo({email:'demo@gmail.com',full_name:'Google Demo',name:'Google Demo',role,auth_provider:'google'},'gdemo_'+Date.now()),1200);
+    resetGBtn();return;}
+  try{
+    const p=new firebase.auth.GoogleAuthProvider();
+    p.setCustomParameters({prompt:'select_account'});
+    const r=await fbAuth.signInWithPopup(p);
+    const u=r.user;
+    const tok=await u.getIdToken();
+    // Check if doctor/hospital is approved
+    if(role==='doctor'||role==='hospital_admin'){
+      const snap=await fbDB.collection('pending_registrations').where('email','==',u.email).where('status','==','pending').get();
+      if(!snap.empty){showAlert('warn','Your account is pending admin approval. You will be notified by email.');resetGBtn();return;}
+    }
+    await saveAndGo({uid:u.uid,email:u.email,full_name:u.displayName,name:u.displayName,role,picture:u.photoURL||'',auth_provider:'google'},tok);
+  }catch(e){
+    if(e.code!=='auth/popup-closed-by-user')showAlert('error','Google login failed: '+e.message);
+    resetGBtn();
+  }
+}
+function resetGBtn(){const btn=document.getElementById('gBtn');btn.disabled=false;btn.innerHTML='<svg class="g-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Continue with Google';}
+
+/* ═══════════════════════════════════════════/* ═══════════════════════════════════════════════
+   EMAIL OTP LOGIN — Django Gmail SMTP Backend
+   Points: 5,6,7,8,9,10,11,12
+═══════════════════════════════════════════════ */
+let _otpIv = null, _otpSec = 120;
+
+async function sendOTP() {
+  const email = document.getElementById('otpEmail').value.trim().toLowerCase();
+
+  // Point 11 — Input validation (email format)
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    showAlert('error', 'Please enter a valid email address (e.g. user@gmail.com).');
+    return;
+  }
+
+  const sendBtn = document.getElementById('sendBtn');
+  const sendTxt = document.getElementById('sendTxt');
+  sendBtn.disabled = true;
+  sendTxt.textContent = 'Sending…';
+  clearAlerts();
+
+  try {
+    // Point 5 — Send OTP API call → Django backend → Gmail SMTP
+    const r = await fetch(API + '/accounts/send-otp/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const d = await r.json();
+
+    if (d.success) {
+      document.getElementById('otpBox').classList.add('open');
+      sendBtn.disabled = false;
+      sendTxt.textContent = '✓ Sent — Resend';
+      showAlert('ok', '📧 OTP sent to <strong>' + email + '</strong>. Check your inbox — expires in 2 minutes.');
+      startOTPTimer();
+      document.querySelector('.otp-d[data-i="0"]').focus();
+    } else if (r.status === 429) {
+      // Point 10 — Rate limit response
+      const wait = d.seconds_left || 60;
+      showAlert('warn', `⏱ Please wait ${wait} seconds before requesting another OTP.`);
+      sendBtn.disabled = false;
+      sendTxt.textContent = 'Send OTP';
+    } else {
+      showAlert('error', d.message || 'Failed to send OTP. Please try again.');
+      sendBtn.disabled = false;
+      sendTxt.textContent = 'Send OTP';
+    }
+  } catch (err) {
+    console.error('sendOTP error:', err);
+    showAlert('error', '⏳ Backend is waking up (Render free tier). Please wait 30 seconds and try again. If issue persists, use Password login instead.');
+    sendBtn.disabled = false;
+    sendTxt.textContent = 'Send OTP';
+  }
+}
+
+function startOTPTimer() {
+  // Point 7 — 2-minute expiry countdown
+  clearInterval(_otpIv); _otpSec = 120;
+  const tEl = document.getElementById('otpTimer');
+  const rBtn = document.getElementById('resendBtn');
+  rBtn.disabled = true;
+  tEl.textContent = '2:00';
+  _otpIv = setInterval(() => {
+    _otpSec--;
+    const m = Math.floor(_otpSec / 60), s = _otpSec % 60;
+    tEl.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+    if (_otpSec <= 0) {
+      clearInterval(_otpIv);
+      tEl.textContent = 'Expired';
+      rBtn.disabled = false;  // allow resend after expiry
+    }
+  }, 1000);
+}
+
+// Point 9 — Resend OTP (calls same send-otp endpoint; backend cancels old OTP)
+async function resendOTP() {
+  const email = document.getElementById('otpEmail').value.trim().toLowerCase();
+  if (!email) { showAlert('error', 'Enter your email first.'); return; }
+  const rBtn = document.getElementById('resendBtn');
+  rBtn.disabled = true;
+  rBtn.textContent = 'Resending…';
+  clearAlerts();
+  try {
+    const r = await fetch(API + '/accounts/resend-otp/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const d = await r.json();
+    if (d.success) {
+      // Clear digit boxes for fresh entry
+      document.querySelectorAll('.otp-d').forEach(d => { d.value = ''; d.classList.remove('ok','bad'); });
+      startOTPTimer();
+      showAlert('ok', '🔄 New OTP sent! The previous code has been cancelled.');
+      document.querySelector('.otp-d[data-i="0"]').focus();
+    } else if (r.status === 429) {
+      const wait = d.seconds_left || 60;
+      showAlert('warn', `⏱ Wait ${wait}s before resending.`);
+    } else {
+      showAlert('error', d.message || 'Resend failed.');
+    }
+  } catch (err) {
+    showAlert('error', 'Network error during resend.');
+  } finally {
+    rBtn.textContent = 'Resend';
+  }
+}
+
+// OTP digit interaction — auto-advance, backspace, paste, Enter
+document.querySelectorAll('.otp-d').forEach(inp => {
+  inp.addEventListener('input', function () {
+    this.value = this.value.replace(/\D/g, '').slice(-1);
+    this.classList.toggle('ok', !!this.value);
+    if (this.value) {
+      const n = document.querySelector(`.otp-d[data-i="${+this.dataset.i + 1}"]`);
+      if (n) n.focus();
+    }
+    document.querySelectorAll('.otp-d').forEach(d => d.classList.remove('bad'));
+  });
+  inp.addEventListener('keydown', function (e) {
+    if (e.key === 'Backspace' && !this.value) {
+      const p = document.querySelector(`.otp-d[data-i="${+this.dataset.i - 1}"]`);
+      if (p) { p.focus(); p.value = ''; p.classList.remove('ok', 'bad'); }
+    }
+    if (e.key === 'Enter') verifyOTP();
+  });
+  inp.addEventListener('paste', function (e) {
+    e.preventDefault();
+    const p = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+    document.querySelectorAll('.otp-d').forEach((d, i) => { d.value = p[i] || ''; d.classList.toggle('ok', !!p[i]); });
+    const last = document.querySelector(`.otp-d[data-i="${Math.min(p.length, 5)}"]`);
+    if (last) last.focus();
+    if (p.length >= 6) setTimeout(verifyOTP, 150);
+  });
+});
+
+async function verifyOTP() {
+  // Point 11 — 6-digit OTP format check
+  const code = Array.from(document.querySelectorAll('.otp-d')).map(d => d.value).join('');
+  if (!/^\d{6}$/.test(code)) { showAlert('error', 'Enter all 6 digits of your OTP.'); return; }
+
+  const email = document.getElementById('otpEmail').value.trim().toLowerCase();
+  if (!email) { showAlert('error', 'Email is missing.'); return; }
+
+  document.getElementById('verifyBtn').disabled = true;
+  document.getElementById('verifyTxt').style.display = 'none';
+  document.getElementById('verifySp').style.display = 'block';
+
+  try {
+    // Point 6 — Verify OTP API call
+    const r = await fetch(API + '/accounts/verify-otp/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp: code })
+    });
+    const d = await r.json();
+
+    if (d.success) {
+      // Point 8 — OTP deleted server-side on success; proceed with login
+      clearInterval(_otpIv);
+      const user = d.user || { email, full_name: email.split('@')[0], role, auth_provider: 'email_otp' };
+      const token = d.token || ('otp_' + Date.now());
+      saveAndGo(user, token);
+    } else {
+      document.querySelectorAll('.otp-d').forEach(d => d.classList.add('bad'));
+      showAlert('error', d.message || 'Invalid OTP. Please try again.');
+      document.getElementById('verifyBtn').disabled = false;
+      document.getElementById('verifyTxt').style.display = '';
+      document.getElementById('verifySp').style.display = 'none';
+    }
+  } catch (err) {
+    console.error('verifyOTP error:', err);
+    showAlert('error', 'Network error during verification.');
+    document.getElementById('verifyBtn').disabled = false;
+    document.getElementById('verifyTxt').style.display = '';
+    document.getElementById('verifySp').style.display = 'none';
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   PASSWORD LOGIN
+═══════════════════════════════════════════════ */
+async function passwordLogin(){
+  const email=document.getElementById('pwEmail').value.trim().toLowerCase();
+  const pass=document.getElementById('pwPass').value;
+  if(!email){showAlert('error','Enter your email.');return;}
+  if(!pass){showAlert('error','Enter your password.');return;}
+  document.getElementById('loginBtn').disabled=true;
+  document.getElementById('loginTxt').style.display='none';
+  document.getElementById('loginSp').style.display='block';
+
+  // Firebase
+  if(fbAuth){
+    try{
+      const r=await fbAuth.signInWithEmailAndPassword(email,pass);
+      const u=r.user;const tok=await u.getIdToken();
+      // Check pending approval for doctor/hospital
+      if(role==='doctor'||role==='hospital_admin'){
+        const snap=await fbDB.collection('pending_registrations').where('email','==',email).where('status','==','pending').get();
+        if(!snap.empty){showAlert('warn','Your account is under admin review. You will be notified by email when approved.');resetLoginBtn();return;}
+        const rejSnap=await fbDB.collection('pending_registrations').where('email','==',email).where('status','==','rejected').get();
+        if(!rejSnap.empty){showAlert('error','Your registration was rejected. Please contact support.');resetLoginBtn();return;}
+      }
+      await saveAndGo({uid:u.uid,email:u.email,full_name:u.displayName||email.split('@')[0],role,auth_provider:'email_password'},tok);return;
+    }catch(e){
+      if(e.code==='auth/wrong-password'||e.code==='auth/user-not-found'||e.code==='auth/invalid-credential'){showAlert('error','Invalid email or password.');resetLoginBtn();return;}
+      if(e.code!=='auth/network-request-failed'){console.warn('FB login:',e.code);}
+    }
+  }
+  // Backend
+  try{
+    const r=await fetch(API+'/accounts/login/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass,role})});
+    const d=await r.json();
+    if(d.success){
+      const userObj = {...d.user, role: d.user.role||role};
+      await saveAndGo(userObj, d.token);
+      return;
+    }
+    else{showAlert('error',d.message||'Invalid credentials.');resetLoginBtn();return;}
+  }catch(e){}
+  // LocalStorage users
+  const regU=JSON.parse(localStorage.getItem('mf_registered_users')||'{}')[email];
+  if(regU&&regU.password===pass){
+    const fn = regU.full_name || ((regU.firstName||'')+ ' '+(regU.lastName||'')).trim() || email.split('@')[0];
+    await saveAndGo({email,full_name:fn,role:regU.role||'patient',phone:regU.phone||'',address:regU.address||'',blood_group:regU.blood_group||'',auth_provider:'local'},'local_'+Date.now());
+    return;
+  }
+  // Demo
+  const demo=DEMOS[email];
+  if(demo&&demo.pw===pass){await saveAndGo({email,full_name:demo.name,role:demo.role,auth_provider:'demo'},'demo_'+Date.now());return;}
+  showAlert('error','Invalid email or password.');resetLoginBtn();
+}
+function resetLoginBtn(){document.getElementById('loginBtn').disabled=false;document.getElementById('loginTxt').style.display='';document.getElementById('loginSp').style.display='none';}
+
+async function forgotPW(e){
+  e.preventDefault();
+  const email=document.getElementById('pwEmail').value.trim();
+  if(!email){showAlert('error','Enter your email first.');return;}
+  if(fbAuth){try{await fbAuth.sendPasswordResetEmail(email);showAlert('ok','Password reset email sent! Check your inbox.');return;}catch(err){showAlert('error',err.message);return;}}
+  showAlert('ok','Password reset link sent (demo mode).');
+}
+
+// Check if Firebase email link sign-in
+if(fbAuth&&fbAuth.isSignInWithEmailLink(location.href)){
+  const savedEmail=localStorage.getItem('mfOTPEmail');
+  if(savedEmail){
+    fbAuth.signInWithEmailLink(savedEmail,location.href).then(async r=>{
+      const u=r.user;const tok=await u.getIdToken();
+      localStorage.removeItem('mfOTPEmail');
+      await saveAndGo({uid:u.uid,email:u.email,full_name:u.displayName||savedEmail.split('@')[0],role:localStorage.getItem('mf_pending_role')||'patient',auth_provider:'email_link'},tok);
+    }).catch(e=>showAlert('error','Email link verification failed: '+e.message));
+  }
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    if(tab==='pw') passwordLogin();
+    // OTP panel: Enter on OTP digits handled by otp-d keydown listeners
+  }
+});
+</script>
+</body>
+</html>

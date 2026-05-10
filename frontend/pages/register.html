@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Register — MedFind Bangladesh</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--ink:#05101e;--blue:#1a56db;--teal:#0d9488;--teal-l:#14b8a6;--t1:#f0f9ff;--t2:#93c5fd;--t3:#475569;--border:rgba(255,255,255,.07);--red:#ef4444;--amber:#f59e0b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--t1);min-height:100vh;}
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid var(--border);background:rgba(5,16,30,.85);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:.7rem;text-decoration:none;}
+.logo img{width:36px;height:36px;object-fit:contain;}
+.logo-text{font-size:1.2rem;font-weight:900;}.logo-text .m{color:#fff;}.logo-text .f{color:var(--teal-l);}
+.nav-link{font-size:.82rem;color:rgba(240,249,255,.55);text-decoration:none;font-weight:600;}
+.nav-link:hover{color:var(--teal-l);}
+/* MAIN */
+.page{max-width:760px;margin:0 auto;padding:2rem 1.5rem;}
+.page-title{font-size:2rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.3rem;}
+.page-sub{font-size:.88rem;color:rgba(240,249,255,.5);margin-bottom:2rem;}
+/* ROLE SELECTOR */
+.role-selector{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-bottom:2rem;}
+.rs-card{border:2px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);border-radius:14px;padding:1.2rem .8rem;text-align:center;cursor:pointer;transition:.25s;position:relative;overflow:hidden;}
+.rs-card::before{content:'';position:absolute;inset:0;opacity:0;transition:.25s;}
+.rs-card:hover{border-color:rgba(13,148,136,.35);}
+.rs-card.active{border-color:transparent;}
+.rs-card.active::before{opacity:1;}
+.rs-card[data-role="patient"]::before{background:linear-gradient(135deg,rgba(26,86,219,.35),rgba(13,148,136,.35));}
+.rs-card[data-role="doctor"]::before{background:linear-gradient(135deg,rgba(139,92,246,.35),rgba(59,130,246,.35));}
+.rs-card[data-role="hospital"]::before{background:linear-gradient(135deg,rgba(5,150,105,.35),rgba(13,148,136,.35));}
+.rs-inner{position:relative;z-index:1;}
+.rs-icon{font-size:1.8rem;margin-bottom:.5rem;display:block;}
+.rs-label{font-size:.82rem;font-weight:700;color:rgba(240,249,255,.75);}
+.rs-card.active .rs-label{color:#fff;}
+.rs-badge{font-size:.6rem;padding:.18rem .5rem;border-radius:20px;margin-top:.35rem;display:inline-block;}
+.badge-simple{background:rgba(13,148,136,.2);color:var(--teal-l);border:1px solid rgba(13,148,136,.3);}
+.badge-strict{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.25);}
+/* GOOGLE QUICK REGISTER */
+.google-register{width:100%;padding:.85rem;background:#fff;border:none;border-radius:12px;color:#1f1f1f;font-size:.92rem;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.7rem;box-shadow:0 4px 18px rgba(0,0,0,.2);transition:.22s;margin-bottom:.75rem;}
+.google-register:hover{background:#f3f4f6;transform:translateY(-1px);}
+.google-register:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.g-icon{width:19px;height:19px;}
+.divider{display:flex;align-items:center;gap:.6rem;color:var(--t3);font-size:.72rem;margin:.85rem 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.055);}
+/* SECTIONS */
+.section{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.section-title{font-size:1rem;font-weight:700;margin-bottom:.25rem;display:flex;align-items:center;gap:.6rem;}
+.section-sub{font-size:.78rem;color:rgba(240,249,255,.45);margin-bottom:1.25rem;}
+.section-title i{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;}
+/* FORM GRID */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:.88rem;}
+.fgrid.full{grid-template-columns:1fr;}
+.fgroup{display:flex;flex-direction:column;}
+.fgroup.span2{grid-column:span 2;}
+.flabel{font-size:.7rem;font-weight:700;color:rgba(240,249,255,.55);margin-bottom:.32rem;display:flex;align-items:center;gap:.3rem;}
+.freq{color:var(--red);font-size:.65rem;}
+.fopt{color:var(--t3);font-size:.63rem;font-weight:400;}
+.fw{position:relative;}
+.fic{position:absolute;left:.88rem;top:50%;transform:translateY(-50%);font-size:.78rem;color:var(--t3);pointer-events:none;transition:.2s;}
+.finput,.fselect,.ftextarea{width:100%;padding:.76rem 1rem .76rem 2.5rem;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);border-radius:10px;color:var(--t1);font-size:.875rem;font-family:'Outfit',sans-serif;outline:none;transition:.22s;}
+.finput::placeholder,.ftextarea::placeholder{color:var(--t3);}
+.finput:focus,.fselect:focus,.ftextarea:focus{background:rgba(255,255,255,.065);border-color:rgba(13,148,136,.5);box-shadow:0 0 0 3px rgba(13,148,136,.09);}
+.fw:focus-within .fic{color:var(--teal-l);}
+.fselect{padding-left:2.5rem;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .9rem center;}
+.fselect option{background:#0a1929;color:var(--t1);}
+.ftextarea{padding:.76rem 1rem .76rem 2.5rem;resize:vertical;min-height:90px;}
+.ferr{font-size:.67rem;color:#fca5a5;margin-top:.28rem;display:none;}
+.ferr.show{display:block;}
+.finput.invalid,.fselect.invalid{border-color:var(--red)!important;}
+/* EMAIL VERIFY */
+.verify-row{display:flex;gap:.5rem;}
+.verify-row .finput{flex:1;}
+.ver-btn{padding:.76rem 1rem;background:rgba(13,148,136,.14);border:1.5px solid rgba(13,148,136,.32);border-radius:10px;color:var(--teal-l);font-size:.78rem;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;white-space:nowrap;transition:.2s;flex-shrink:0;}
+.ver-btn:hover:not(:disabled){background:rgba(13,148,136,.24);}
+.ver-btn:disabled{opacity:.5;cursor:not-allowed;}
+.otp-strip{display:flex;gap:.38rem;margin-top:.5rem;}
+.otp-s{width:38px;height:42px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);border-radius:8px;color:#fff;font-size:1rem;font-weight:700;text-align:center;font-family:'JetBrains Mono',monospace;outline:none;transition:.2s;}
+.otp-s:focus{border-color:var(--teal);background:rgba(13,148,136,.1);}
+.otp-s.ok{border-color:var(--teal);}
+.otp-s.bad{border-color:var(--red);}
+.verified-tag{display:none;align-items:center;gap:.4rem;font-size:.72rem;color:#34d399;font-weight:700;margin-top:.4rem;}
+.verified-tag.show{display:flex;}
+/* PHONE */
+.phone-row{display:flex;}
+.phone-prefix{padding:.76rem .75rem;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);border-right:none;border-radius:10px 0 0 10px;font-size:.82rem;color:var(--t3);font-weight:600;white-space:nowrap;display:flex;align-items:center;}
+.phone-row .finput{border-radius:0 10px 10px 0;padding-left:.88rem;}
+.phone-row .finput:focus{border-color:rgba(13,148,136,.5);}
+/* PASSWORD */
+.pw-wrap{position:relative;}
+.pw-wrap .finput{padding-right:2.8rem;}
+.eye-btn{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--t3);cursor:pointer;font-size:.78rem;}
+.strength-bar{height:3px;border-radius:2px;margin-top:.35rem;background:rgba(255,255,255,.06);overflow:hidden;}
+.strength-fill{height:100%;border-radius:2px;transition:.3s;width:0;}
+.strength-txt{font-size:.62rem;color:var(--t3);margin-top:.22rem;}
+/* FILE UPLOAD */
+.file-upload{border:1.5px dashed rgba(255,255,255,.1);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:.22s;position:relative;}
+.file-upload:hover{border-color:rgba(13,148,136,.4);background:rgba(13,148,136,.04);}
+.file-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.file-upload-icon{font-size:1.3rem;color:var(--t3);margin-bottom:.35rem;}
+.file-upload-txt{font-size:.75rem;color:var(--t3);}
+.file-upload-txt b{color:var(--teal-l);}
+.file-list{margin-top:.5rem;display:flex;flex-direction:column;gap:.3rem;}
+.file-item{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--teal-l);background:rgba(13,148,136,.08);padding:.28rem .55rem;border-radius:6px;}
+/* PENDING NOTICE */
+.pending-notice{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.22);border-radius:12px;padding:1rem 1.1rem;margin-bottom:1.25rem;display:none;}
+.pending-notice.show{display:block;}
+.pending-notice h4{font-size:.88rem;font-weight:700;color:#fcd34d;margin-bottom:.35rem;display:flex;align-items:center;gap:.45rem;}
+.pending-notice p{font-size:.78rem;color:rgba(252,211,77,.75);line-height:1.6;}
+/* ALERTS */
+.page-alert{display:none;align-items:center;gap:.55rem;padding:.7rem 1rem;border-radius:10px;font-size:.82rem;margin-bottom:1rem;}
+.page-alert.show{display:flex;}
+.page-alert.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5;}
+.page-alert.ok{background:rgba(13,148,136,.08);border:1px solid rgba(13,148,136,.2);color:#5eead4;}
+.page-alert.warn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:#fcd34d;}
+/* SUBMIT */
+.submit-btn{width:100%;padding:.95rem;background:linear-gradient(135deg,#1a56db,#0d9488);border:none;border-radius:12px;color:#fff;font-size:.96rem;font-weight:800;font-family:'Outfit',sans-serif;cursor:pointer;transition:.28s;box-shadow:0 8px 22px rgba(26,86,219,.25);display:flex;align-items:center;justify-content:center;gap:.55rem;}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 14px 28px rgba(13,148,136,.3);}
+.submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none;}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* SUCCESS */
+.success-screen{display:none;text-align:center;padding:3rem 1.5rem;}
+.success-screen.show{display:block;}
+.success-icon{font-size:3.5rem;margin-bottom:1rem;animation:pop .5s ease;}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.success-title{font-size:1.8rem;font-weight:800;margin-bottom:.5rem;}
+.success-sub{font-size:.92rem;color:rgba(240,249,255,.55);line-height:1.7;max-width:480px;margin:0 auto 1.5rem;}
+.success-id{font-family:'JetBrains Mono',monospace;font-size:.9rem;background:rgba(13,148,136,.1);border:1px solid rgba(13,148,136,.25);border-radius:10px;padding:.65rem 1.25rem;display:inline-block;color:var(--teal-l);margin-bottom:1.5rem;}
+.success-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;background:linear-gradient(135deg,#1a56db,#0d9488);border:none;border-radius:10px;color:#fff;font-size:.88rem;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;text-decoration:none;}
+.login-row{text-align:center;font-size:.82rem;color:rgba(240,249,255,.4);margin-top:1.5rem;}
+.login-row a{color:var(--teal-l);font-weight:700;text-decoration:none;}
+/* RESPONSIVE */
+@media(max-width:900px){body{background:#040c17;}.left-panel{display:none;}.right-panel{padding:1.5rem;min-height:100vh;}}
+@media(max-width:600px){
+  .fgrid{grid-template-columns:1fr;}
+  .fgroup.span2{grid-column:span 1;}
+  .otp-s{width:34px;height:38px;}
+  .role-selector{grid-template-columns:1fr 1fr;}
+  .step-label{font-size:.6rem;}
+  .step-circle{width:28px;height:28px;font-size:.75rem;}
+  .form-title{font-size:1.4rem;}
+  body{padding:0;}
+}
+@media(max-width:380px){
+  .role-selector{grid-template-columns:1fr 1fr;}
+  .otp-s{width:30px;height:34px;font-size:.95rem;}
+}
+</style>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Register — MedFind Bangladesh">
+  <meta property="og:description" content="MedFind Bangladesh — Digital Healthcare Platform. Find doctors, hospitals, book appointments online.">
+  <meta property="og:image" content="https://medfind-bangladesh.web.app/assets/medfind-logo.png">
+  <meta property="og:site_name" content="MedFind Bangladesh">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Register — MedFind Bangladesh">
+  <meta name="twitter:description" content="MedFind Bangladesh — Digital Healthcare Platform. Find doctors, hospitals, book appointments online.">
+  <link rel="icon" type="image/png" href="../assets/medfind-logo.png">
+  <link rel="apple-touch-icon" href="../assets/medfind-logo.png">
+</head>
+<body data-no-navbar="true">
+<nav class="nav">
+  <a href="../index.html" class="logo"><img src="../assets/medfind-logo.png" alt="MedFind"><div class="logo-text"><span class="m">Med</span><span class="f">Find</span></div></a>
+  <a href="login.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Login</a>
+</nav>
+
+<div class="page">
+  <!-- SUCCESS SCREEN -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon" id="successIcon">🎉</div>
+    <div class="success-title" id="successTitle">Account Created!</div>
+    <div class="success-sub" id="successSub">Your MedFind account has been created successfully.</div>
+    <div class="success-id" id="successId" style="display:none;"></div>
+    <br>
+    <a href="login.html" class="success-btn"><i class="fas fa-arrow-right-to-bracket"></i> Go to Login</a>
+  </div>
+
+  <!-- REGISTRATION FORM -->
+  <div id="regForm">
+    <div class="page-title">Create Your Account</div>
+    <div class="page-sub">Join MedFind Bangladesh — Free to start, always secure</div>
+
+    <!-- ROLE SELECTOR -->
+    <div class="role-selector">
+      <div class="rs-card active" data-role="patient" onclick="selectRole('patient',this)">
+        <div class="rs-inner">
+          <span class="rs-icon">🧑‍⚕️</span>
+          <div class="rs-label">Patient</div>
+          <div class="rs-badge badge-simple">Quick & Free</div>
+        </div>
+      </div>
+      <div class="rs-card" data-role="doctor" onclick="selectRole('doctor',this)">
+        <div class="rs-inner">
+          <span class="rs-icon">👨‍⚕️</span>
+          <div class="rs-label">Doctor</div>
+          <div class="rs-badge badge-strict">Admin Verified</div>
+        </div>
+      </div>
+      <div class="rs-card" data-role="hospital" onclick="selectRole('hospital',this)">
+        <div class="rs-inner">
+          <span class="rs-icon">🏥</span>
+          <div class="rs-label">Hospital</div>
+          <div class="rs-badge badge-strict">Admin Verified</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENDING NOTICE (for Doctor/Hospital) -->
+    <div class="pending-notice" id="pendingNotice">
+      <h4><i class="fas fa-clock"></i> Admin Approval Required</h4>
+      <p>Doctor and Hospital accounts require manual verification by our admin team. After registration, your account will be reviewed within <b>24–48 hours</b>. You will receive an email notification once approved.</p>
+    </div>
+
+    <!-- ALERTS -->
+    <div class="page-alert err" id="pageErr"><i class="fas fa-circle-exclamation"></i><span id="pageErrMsg"></span></div>
+    <div class="page-alert ok" id="pageOk"><i class="fas fa-circle-check"></i><span id="pageOkMsg"></span></div>
+    <div class="page-alert warn" id="pageWarn"><i class="fas fa-triangle-exclamation"></i><span id="pageWarnMsg"></span></div>
+
+    <!-- GOOGLE SIGN-UP (Patient only quick path) -->
+    <div id="googleSection">
+      <button class="google-register" id="gRegBtn" onclick="googleRegister()">
+        <svg class="g-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Sign up instantly with Google
+      </button>
+      <div style="text-align:center;font-size:.65rem;color:var(--t3);margin-bottom:.5rem;"><i class="fas fa-shield-halved" style="color:#34A853;font-size:.58rem;"></i> Secured by Firebase — recommended for patients</div>
+      <div class="divider">or register with email</div>
+    </div>
+
+    <!-- ════ PATIENT FORM ════ -->
+    <div id="formPatient">
+      <div class="section">
+        <div class="section-title"><i class="fas fa-user" style="background:rgba(26,86,219,.18);color:#93c5fd;"></i> Basic Information</div>
+        <div class="section-sub">Simple &amp; quick — takes less than 2 minutes ✅</div>
+        <div class="fgrid">
+
+          <!-- 1. Full Name -->
+          <div class="fgroup">
+            <label class="flabel">Full Name <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-user fic"></i>
+              <input class="finput" type="text" id="p_name" placeholder="Your full name" autocomplete="name">
+            </div>
+            <span class="ferr" id="p_name_err">Full name is required</span>
+          </div>
+
+          <!-- 2. Blood Group -->
+          <div class="fgroup">
+            <label class="flabel">Blood Group <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-droplet fic"></i>
+              <select class="fselect" id="p_blood">
+                <option value="">Select blood group</option>
+                <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+              </select>
+            </div>
+            <span class="ferr" id="p_blood_err">Blood group is required</span>
+          </div>
+
+          <!-- 3. Phone Number -->
+          <div class="fgroup">
+            <label class="flabel">Phone Number <span class="freq">*</span></label>
+            <div class="phone-row">
+              <span class="phone-prefix">+880</span>
+              <input class="finput" type="tel" id="p_phone" placeholder="1XXXXXXXXX" maxlength="10" inputmode="numeric">
+            </div>
+            <span class="ferr" id="p_phone_err">Valid BD phone required (01XXXXXXXXX)</span>
+          </div>
+
+          <!-- 4. Address -->
+          <div class="fgroup">
+            <label class="flabel">Address <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-location-dot fic"></i>
+              <input class="finput" type="text" id="p_address" placeholder="District, Division, Bangladesh" autocomplete="address-level2">
+            </div>
+            <span class="ferr" id="p_address_err">Address is required</span>
+          </div>
+
+          <!-- 5. Email Address -->
+          <div class="fgroup span2">
+            <label class="flabel">
+              Gmail / Email Address <span class="freq">*</span>
+            </label>
+            <div class="fw">
+              <i class="fas fa-envelope fic"></i>
+              <input class="finput" type="email" id="p_email" placeholder="yourname@gmail.com" autocomplete="email" inputmode="email">
+            </div>
+            <span class="ferr" id="p_email_err">Valid email address required</span>
+          </div>
+
+          <!-- 6. Password -->
+          <div class="fgroup">
+            <label class="flabel">Password <span class="freq">*</span></label>
+            <div class="fw pw-wrap">
+              <i class="fas fa-lock fic"></i>
+              <input class="finput" type="password" id="p_password" placeholder="Min. 8 characters" autocomplete="new-password">
+              <button type="button" onclick="togglePassVis('p_password','p_eyeIcon')" class="eye-btn"><i class="fas fa-eye" id="p_eyeIcon"></i></button>
+            </div>
+            <span class="ferr" id="p_password_err">Password must be at least 8 characters</span>
+          </div>
+
+          <!-- 7. Confirm Password -->
+          <div class="fgroup">
+            <label class="flabel">Confirm Password <span class="freq">*</span></label>
+            <div class="fw pw-wrap">
+              <i class="fas fa-lock fic"></i>
+              <input class="finput" type="password" id="p_password2" placeholder="Re-enter password" autocomplete="new-password">
+              <button type="button" onclick="togglePassVis('p_password2','p_eyeIcon2')" class="eye-btn"><i class="fas fa-eye" id="p_eyeIcon2"></i></button>
+            </div>
+            <span class="ferr" id="p_password2_err">Passwords do not match</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Terms -->
+      <div style="margin-top:.5rem;margin-bottom:1.25rem;">
+        <label style="display:flex;align-items:flex-start;gap:.6rem;cursor:pointer;font-size:.8rem;color:rgba(240,249,255,.6);">
+          <input type="checkbox" id="p_terms" style="margin-top:.18rem;accent-color:var(--teal);">
+          I agree to MedFind's <a href="#" style="color:var(--teal-l);font-weight:600;">Terms of Service</a> and <a href="#" style="color:var(--teal-l);font-weight:600;">Privacy Policy</a>
+        </label>
+      </div>
+
+      <button class="submit-btn" id="p_submitBtn" onclick="submitPatient()">
+        <span id="p_submitTxt"><i class="fas fa-user-plus"></i> Create Free Account</span>
+        <div class="spinner" id="p_sp"></div>
+      </button>
+    </div>
+
+    <!-- ════ DOCTOR FORM ════ -->
+    <div id="formDoctor" style="display:none;">
+      <div class="section">
+        <div class="section-title"><i class="fas fa-user-md" style="background:rgba(139,92,246,.18);color:#c4b5fd;"></i> Personal Information</div>
+        <div class="section-sub">Your identity will be verified against BMDC records</div>
+        <div class="fgrid">
+          <div class="fgroup">
+            <label class="flabel">Full Name <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-user fic"></i><input class="finput" type="text" id="d_name" placeholder="Dr. Full Name"></div>
+            <span class="ferr" id="d_name_err">Full name required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Gender <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-venus-mars fic"></i>
+              <select class="fselect" id="d_gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select>
+            </div>
+          </div>
+          <div class="fgroup span2">
+            <label class="flabel">Email Address <span class="freq">*</span></label>
+            <div class="verify-row">
+              <div class="fw" style="flex:1;"><i class="fas fa-envelope fic"></i><input class="finput" type="email" id="d_email" placeholder="doctor@email.com" autocomplete="email"></div>
+              <button class="ver-btn" id="d_verBtn" onclick="sendEmailOTP('doctor')"><i class="fas fa-paper-plane"></i> Send OTP</button>
+            </div>
+            <div id="d_otpWrap" style="display:none;margin-top:.5rem;">
+              <div class="otp-strip">
+                <input class="otp-s" type="text" maxlength="1" data-set="d" data-i="0" inputmode="numeric" autocomplete="one-time-code">
+                <input class="otp-s" type="text" maxlength="1" data-set="d" data-i="1" inputmode="numeric">
+                <input class="otp-s" type="text" maxlength="1" data-set="d" data-i="2" inputmode="numeric">
+                <input class="otp-s" type="text" maxlength="1" data-set="d" data-i="3" inputmode="numeric">
+                <input class="otp-s" type="text" maxlength="1" data-set="d" data-i="4" inputmode="numeric">
+                <input class="otp-s" type="text" maxlength="1" data-set="d" data-i="5" inputmode="numeric">
+              </div>
+              <div style="display:flex;align-items:center;gap:.5rem;margin-top:.38rem;font-size:.68rem;color:var(--t3);">
+                <i class="fas fa-clock"></i><span id="d_timer" style="color:var(--teal-l);font-family:'JetBrains Mono',monospace;font-weight:700;">2:00</span>
+                <button id="d_resend" disabled onclick="sendEmailOTP('doctor')" style="margin-left:auto;background:none;border:none;color:var(--teal-l);font-size:.68rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Resend</button>
+              </div>
+              <div class="verified-tag" id="d_verified"><i class="fas fa-circle-check"></i> Email verified ✓</div>
+            </div>
+            <span class="ferr" id="d_email_err">Valid email required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Phone Number <span class="freq">*</span></label>
+            <div class="phone-row"><span class="phone-prefix">+880</span><input class="finput" type="tel" id="d_phone" placeholder="1XXXXXXXXX" maxlength="10"></div>
+            <span class="ferr" id="d_phone_err">Valid phone required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">National ID (NID) <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-id-card fic"></i><input class="finput" type="text" id="d_nid" placeholder="10 or 17-digit NID number"></div>
+            <span class="ferr" id="d_nid_err">NID number required</span>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-stethoscope" style="background:rgba(26,86,219,.18);color:#93c5fd;"></i> Medical Credentials</div>
+        <div class="section-sub">These will be verified against BMDC registry</div>
+        <div class="fgrid">
+          <div class="fgroup">
+            <label class="flabel">BMDC Registration Number <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-id-badge fic"></i><input class="finput" type="text" id="d_bmdc" placeholder="e.g. A-12345"></div>
+            <span class="ferr" id="d_bmdc_err">BMDC number required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Specialization <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-microscope fic"></i>
+              <select class="fselect" id="d_spec">
+                <option value="">Select specialization</option>
+                <option>General Medicine</option><option>Cardiology</option><option>Orthopedics</option>
+                <option>Neurology</option><option>Pediatrics</option><option>Gynecology</option>
+                <option>Dermatology</option><option>Ophthalmology</option><option>ENT</option>
+                <option>Psychiatry</option><option>Oncology</option><option>Urology</option>
+                <option>Nephrology</option><option>Gastroenterology</option><option>Endocrinology</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <span class="ferr" id="d_spec_err">Specialization required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Medical Degree <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-graduation-cap fic"></i><input class="finput" type="text" id="d_degree" placeholder="e.g. MBBS, MD, FCPS"></div>
+            <span class="ferr" id="d_degree_err">Degree required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Years of Experience <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-clock fic"></i>
+              <select class="fselect" id="d_exp">
+                <option value="">Select</option><option>0–2 years</option><option>3–5 years</option>
+                <option>6–10 years</option><option>11–15 years</option><option>15+ years</option>
+              </select>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Current Hospital/Chamber <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-hospital fic"></i><input class="finput" type="text" id="d_hospital" placeholder="Hospital or chamber name"></div>
+            <span class="ferr" id="d_hospital_err">Hospital name required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">District <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-location-dot fic"></i><input class="finput" type="text" id="d_district" placeholder="e.g. Dhaka, Chittagong"></div>
+          </div>
+          <div class="fgroup span2">
+            <label class="flabel">Consultation Fee (BDT) <span class="fopt">(Optional)</span></label>
+            <div class="fw"><i class="fas fa-bangladeshi-taka-sign fic"></i><input class="finput" type="number" id="d_fee" placeholder="e.g. 500"></div>
+            <div style="font-size:.65rem;color:var(--t3);margin-top:.25rem;"><i class="fas fa-info-circle"></i> MedFind earns 5% commission per appointment booking</div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-file-medical" style="background:rgba(13,148,136,.18);color:#5eead4;"></i> Supporting Documents</div>
+        <div class="section-sub">Upload clear scans — admin will verify before activation</div>
+        <div class="fgrid">
+          <div class="fgroup">
+            <label class="flabel">BMDC Certificate <span class="freq">*</span></label>
+            <div class="file-upload" id="d_bmdc_upload">
+              <input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this,'d_bmdc_files','d_bmdc_upload')">
+              <div class="file-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+              <div class="file-upload-txt">Drop or <b>browse</b> · PDF/JPG/PNG</div>
+            </div>
+            <div class="file-list" id="d_bmdc_files"></div>
+            <span class="ferr" id="d_bmdc_file_err">BMDC certificate required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">NID / Passport <span class="freq">*</span></label>
+            <div class="file-upload" id="d_nid_upload">
+              <input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this,'d_nid_files','d_nid_upload')">
+              <div class="file-upload-icon"><i class="fas fa-id-card"></i></div>
+              <div class="file-upload-txt">Drop or <b>browse</b> · PDF/JPG/PNG</div>
+            </div>
+            <div class="file-list" id="d_nid_files"></div>
+            <span class="ferr" id="d_nid_file_err">NID document required</span>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-lock" style="background:rgba(245,158,11,.12);color:#fcd34d;"></i> Account Security</div>
+        <div class="section-sub">Set a strong password for your account</div>
+        <div class="fgrid">
+          <div class="fgroup">
+            <label class="flabel">Password <span class="freq">*</span></label>
+            <div class="fw pw-wrap"><i class="fas fa-lock fic"></i><input class="finput" type="password" id="d_pw" placeholder="Min 8 characters" autocomplete="new-password" oninput="checkStrength('d_pw','d_str','d_strtxt')"><button class="eye-btn" onclick="toggleEye('d_pw','d_eye')" type="button"><i class="fas fa-eye" id="d_eye"></i></button></div>
+            <div class="strength-bar"><div class="strength-fill" id="d_str"></div></div>
+            <div class="strength-txt" id="d_strtxt"></div>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Confirm Password <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-lock fic"></i><input class="finput" type="password" id="d_cpw" placeholder="Repeat password" autocomplete="new-password"></div>
+            <span class="ferr" id="d_pw_err">Passwords do not match</span>
+          </div>
+        </div>
+      </div>
+      <button class="submit-btn" id="d_submitBtn" onclick="submitDoctor()">
+        <span id="d_submitTxt"><i class="fas fa-paper-plane"></i> Submit for Admin Review</span>
+        <div class="spinner" id="d_sp"></div>
+      </button>
+    </div>
+
+    <!-- ════ HOSPITAL FORM ════ -->
+    <div id="formHospital" style="display:none;">
+      <div class="section">
+        <div class="section-title"><i class="fas fa-hospital" style="background:rgba(5,150,105,.18);color:#5eead4;"></i> Hospital Information</div>
+        <div class="section-sub">Provide official registration details</div>
+        <div class="fgrid">
+          <div class="fgroup span2">
+            <label class="flabel">Hospital / Clinic Name <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-hospital fic"></i><input class="finput" type="text" id="h_name" placeholder="Official hospital name"></div>
+            <span class="ferr" id="h_name_err">Hospital name required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Trade / Registration License No. <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-file-contract fic"></i><input class="finput" type="text" id="h_reg" placeholder="License number"></div>
+            <span class="ferr" id="h_reg_err">License number required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Hospital Type <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-building fic"></i>
+              <select class="fselect" id="h_type">
+                <option value="">Select type</option>
+                <option>Government Hospital</option><option>Private Hospital</option><option>Diagnostic Center</option>
+                <option>Clinic</option><option>Specialized Center</option><option>Medical College Hospital</option>
+              </select>
+            </div>
+          </div>
+          <div class="fgroup span2">
+            <label class="flabel">Official Address <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-location-dot fic"></i><input class="finput" type="text" id="h_address" placeholder="Full address with district"></div>
+            <span class="ferr" id="h_address_err">Address required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Contact Number <span class="freq">*</span></label>
+            <div class="phone-row"><span class="phone-prefix">+880</span><input class="finput" type="tel" id="h_phone" placeholder="1XXXXXXXXX" maxlength="10"></div>
+            <span class="ferr" id="h_phone_err">Phone required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Official Email <span class="freq">*</span></label>
+            <div class="verify-row">
+              <div class="fw" style="flex:1;"><i class="fas fa-envelope fic"></i><input class="finput" type="email" id="h_email" placeholder="hospital@email.com" autocomplete="email"></div>
+              <button class="ver-btn" id="h_verBtn" onclick="sendEmailOTP('hospital')"><i class="fas fa-paper-plane"></i> Send OTP</button>
+            </div>
+            <div id="h_otpWrap" style="display:none;margin-top:.5rem;">
+              <div class="otp-strip">
+                <input class="otp-s" type="text" maxlength="1" data-set="h" data-i="0" inputmode="numeric" autocomplete="one-time-code">
+                <input class="otp-s" type="text" maxlength="1" data-set="h" data-i="1" inputmode="numeric">
+                <input class="otp-s" type="text" maxlength="1" data-set="h" data-i="2" inputmode="numeric">
+                <input class="otp-s" type="text" maxlength="1" data-set="h" data-i="3" inputmode="numeric">
+                <input class="otp-s" type="text" maxlength="1" data-set="h" data-i="4" inputmode="numeric">
+                <input class="otp-s" type="text" maxlength="1" data-set="h" data-i="5" inputmode="numeric">
+              </div>
+              <div style="display:flex;align-items:center;gap:.5rem;margin-top:.38rem;font-size:.68rem;color:var(--t3);">
+                <i class="fas fa-clock"></i><span id="h_timer" style="color:var(--teal-l);font-family:'JetBrains Mono',monospace;font-weight:700;">2:00</span>
+                <button id="h_resend" disabled onclick="sendEmailOTP('hospital')" style="margin-left:auto;background:none;border:none;color:var(--teal-l);font-size:.68rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Resend</button>
+              </div>
+              <div class="verified-tag" id="h_verified"><i class="fas fa-circle-check"></i> Email verified ✓</div>
+            </div>
+            <span class="ferr" id="h_email_err">Valid email required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Website <span class="fopt">(Optional)</span></label>
+            <div class="fw"><i class="fas fa-globe fic"></i><input class="finput" type="url" id="h_web" placeholder="https://hospital.com.bd"></div>
+          </div>
+          <div class="fgroup span2">
+            <label class="flabel">Total Beds <span class="fopt">(Optional)</span></label>
+            <div class="fw"><i class="fas fa-bed fic"></i><input class="finput" type="number" id="h_beds" placeholder="e.g. 200"></div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-file-medical" style="background:rgba(13,148,136,.18);color:#5eead4;"></i> Supporting Documents</div>
+        <div class="section-sub">Required for admin verification</div>
+        <div class="fgrid">
+          <div class="fgroup">
+            <label class="flabel">Trade License <span class="freq">*</span></label>
+            <div class="file-upload">
+              <input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this,'h_trade_files','')">
+              <div class="file-upload-icon"><i class="fas fa-file-contract"></i></div>
+              <div class="file-upload-txt">Drop or <b>browse</b></div>
+            </div>
+            <div class="file-list" id="h_trade_files"></div>
+            <span class="ferr" id="h_trade_err">Trade license required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Hospital Registration Certificate <span class="freq">*</span></label>
+            <div class="file-upload">
+              <input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this,'h_cert_files','')">
+              <div class="file-upload-icon"><i class="fas fa-hospital"></i></div>
+              <div class="file-upload-txt">Drop or <b>browse</b></div>
+            </div>
+            <div class="file-list" id="h_cert_files"></div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-user-tie" style="background:rgba(26,86,219,.18);color:#93c5fd;"></i> Admin Contact Person</div>
+        <div class="section-sub">Who will manage this hospital account?</div>
+        <div class="fgrid">
+          <div class="fgroup">
+            <label class="flabel">Contact Person Name <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-user fic"></i><input class="finput" type="text" id="h_admin_name" placeholder="Full name"></div>
+            <span class="ferr" id="h_admin_name_err">Contact name required</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Designation <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-briefcase fic"></i><input class="finput" type="text" id="h_admin_role" placeholder="e.g. Director, CEO, Manager"></div>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Password <span class="freq">*</span></label>
+            <div class="fw pw-wrap"><i class="fas fa-lock fic"></i><input class="finput" type="password" id="h_pw" placeholder="Min 8 characters" autocomplete="new-password" oninput="checkStrength('h_pw','h_str','h_strtxt')"><button class="eye-btn" onclick="toggleEye('h_pw','h_eye')" type="button"><i class="fas fa-eye" id="h_eye"></i></button></div>
+            <div class="strength-bar"><div class="strength-fill" id="h_str"></div></div>
+            <div class="strength-txt" id="h_strtxt"></div>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Confirm Password <span class="freq">*</span></label>
+            <div class="fw"><i class="fas fa-lock fic"></i><input class="finput" type="password" id="h_cpw" placeholder="Repeat password" autocomplete="new-password"></div>
+            <span class="ferr" id="h_pw_err">Passwords do not match</span>
+          </div>
+        </div>
+      </div>
+      <button class="submit-btn" id="h_submitBtn" onclick="submitHospital()">
+        <span id="h_submitTxt"><i class="fas fa-paper-plane"></i> Submit for Admin Review</span>
+        <div class="spinner" id="h_sp"></div>
+      </button>
+    </div>
+
+    <div class="login-row">Already have an account? <a href="login.html">Sign in →</a></div>
+  </div>
+</div>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/firebase-config.js"></script>
+<script src="../assets/js/firestore.js"></script>
+<script>
+const API=(window.MEDFIND_CONFIG&&window.MEDFIND_CONFIG.API_BASE)?window.MEDFIND_CONFIG.API_BASE:(location.hostname==='localhost'||location.hostname==='127.0.0.1'?'http://127.0.0.1:8000/api/v1':'https://medfind-bangladesh-ai-healthcare-platform.onrender.com/api/v1');
+let fbAuth=null,fbDB=null;
+try{if(!firebase.apps.length)firebase.initializeApp(window.MEDFIND_FIREBASE||{});fbAuth=firebase.auth();fbDB=firebase.firestore();}catch(e){console.warn('Firebase:',e);}
+
+/* ── ROLE SELECT ── */
+let curRole='patient';
+let emailVerified={patient:true,doctor:false,hospital:false};
+let emailOTPs={patient:null,doctor:null,hospital:null};
+let otpTimers={patient:null,doctor:null,hospital:null};
+let uploadedFiles={d_bmdc:null,d_nid:null,h_trade:null,h_cert:null};
+
+function selectRole(r,el){
+  curRole=r;
+  document.querySelectorAll('.rs-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('formPatient').style.display=r==='patient'?'block':'none';
+  document.getElementById('formDoctor').style.display=r==='doctor'?'block':'none';
+  document.getElementById('formHospital').style.display=r==='hospital'?'block':'none';
+  document.getElementById('pendingNotice').classList.toggle('show',r!=='patient');
+  document.getElementById('googleSection').style.display=r==='patient'?'block':'none';
+}
+
+/* ── GOOGLE REGISTER ── */
+async function googleRegister(){
+  if(!fbAuth){showAlert('warn','Configure firebase-config.js for Google sign-up');return;}
+  const btn=document.getElementById('gRegBtn');btn.disabled=true;
+  try{
+    const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
+    const r=await fbAuth.signInWithPopup(p);const u=r.user;
+    const tok=await u.getIdToken();
+    // Save to Firestore
+    if(fbDB){await fbDB.collection('users').doc(u.uid).set({uid:u.uid,email:u.email,full_name:u.displayName,name:u.displayName,role:'patient',picture:u.photoURL||'',auth_provider:'google',isActive:true,emailVerified:true,createdAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}
+    localStorage.setItem('mf_token',tok);localStorage.setItem('mf_user',JSON.stringify({uid:u.uid,email:u.email,full_name:u.displayName,role:'patient',picture:u.photoURL||'',auth_provider:'google'}));
+    showSuccess('patient',u.email);
+  }catch(e){if(e.code!=='auth/popup-closed-by-user')showAlert('error','Google error: '+e.message);}
+  btn.disabled=false;
+}
+
+/* ── EMAIL OTP ── */
+const PREFIX_MAP={patient:'p_',doctor:'d_',hospital:'h_'};
+
+async function sendEmailOTP(set){
+  const pfx=PREFIX_MAP[set];
+  const emailEl=document.getElementById(pfx+'email');
+  const email=emailEl.value.trim().toLowerCase();
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showPageAlert('err','Please enter a valid email address first.');return;}
+  const btn=document.getElementById(pfx+'verBtn');
+  btn.disabled=true;btn.textContent='Sending...';
+  clearPageAlerts();
+
+  let sent=false;
+
+  // 1. Firebase Email Link (real email — no digit box needed)
+  // 1. Backend OTP — real email via Django backend
+  try{
+    const r=await fetch(API+'/accounts/send-email-otp/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const d=await r.json();
+    if(d.success||d.otp_sent){sent=true;showPageAlert('ok','✅ OTP sent to <strong>'+email+'</strong>. Check your inbox and spam folder.');}
+  }catch(e){}
+
+  // 2. Firebase Email Link fallback (does NOT auto-verify — user must click link then return)
+  if(!sent&&fbAuth){
+    try{
+      await fbAuth.sendSignInLinkToEmail(email,{url:location.href,handleCodeInApp:true});
+      localStorage.setItem('mfRegEmail_'+set,email);
+      sent=true;
+      showPageAlert('ok',
+        '✅ <strong>Magic link sent to '+email+'</strong><br>'+
+        'Open your email, click the link, then return here and enter the 6-digit code shown.<br>'+
+        '<small style="opacity:.75">Check spam if not received.</small>'
+      );
+    }catch(e){ console.warn('Firebase link error ('+e.code+')'); }
+  }
+
+  // 3. Dev/local fallback — generate OTP, log to console ONLY (never auto-filled)
+  if(!sent){
+    emailOTPs[set]=Math.floor(100000+Math.random()*900000).toString();
+    console.log('%c📧 Dev OTP for '+email+':%c '+emailOTPs[set],'color:#14b8a6;font-weight:bold;font-size:13px','font-size:20px;font-weight:900;color:#0d9488;background:#f0fdf4;padding:4px 14px;border-radius:6px');
+    showPageAlert('warn',
+      '<strong>⚠️ Dev Mode</strong> — Backend/Firebase not configured for real emails.<br>'+
+      'Your OTP is in the <strong>browser console</strong> (press F12 → Console tab).<br>'+
+      '<small style="opacity:.8">Copy and type it manually in the boxes below.</small>'
+    );
+    sent=true;
+  }
+
+  btn.innerHTML='<i class="fas fa-redo"></i> Resend'; btn.disabled=false;
+
+  // Always show digit boxes — user must type OTP manually
+  document.getElementById(pfx+'otpWrap').style.display='block';
+  startRegTimer(set,pfx);
+  wireOTPDigits(pfx,set);
+  const firstDigit=document.querySelector('.otp-s[data-set="'+pfx.slice(0,-1)+'"][data-i="0"]');
+  if(firstDigit) firstDigit.focus();
+}
+
+function startRegTimer(set,pfx){
+  clearInterval(otpTimers[set]);
+  let sec=120;const tEl=document.getElementById(pfx+'timer'),rBtn=document.getElementById(pfx+'resend');
+  rBtn.disabled=true;
+  otpTimers[set]=setInterval(()=>{sec--;const m=Math.floor(sec/60),s=sec%60;tEl.textContent=`${m}:${s.toString().padStart(2,'0')}`;if(sec<=0){clearInterval(otpTimers[set]);tEl.textContent='Expired';rBtn.disabled=false;}},1000);
+}
+
+function wireOTPDigits(pfx,set){
+  document.querySelectorAll(`.otp-s[data-set="${pfx.slice(0,-1)}"]`).forEach(inp=>{
+    inp.oninput=function(){this.value=this.value.replace(/\D/g,'').slice(-1);this.classList.toggle('ok',!!this.value);if(this.value){const n=document.querySelector(`.otp-s[data-set="${pfx.slice(0,-1)}"][data-i="${+this.dataset.i+1}"]`);if(n)n.focus();else checkOTPComplete(pfx,set);}};
+    inp.onkeydown=function(e){if(e.key==='Backspace'&&!this.value){const p=document.querySelector(`.otp-s[data-set="${pfx.slice(0,-1)}"][data-i="${+this.dataset.i-1}"]`);if(p){p.focus();p.value='';p.classList.remove('ok');}}};
+    inp.onpaste=function(e){e.preventDefault();const p=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');document.querySelectorAll(`.otp-s[data-set="${pfx.slice(0,-1)}"]`).forEach((d,i)=>{d.value=p[i]||'';d.classList.toggle('ok',!!p[i]);});if(p.length>=6)setTimeout(()=>checkOTPComplete(pfx,set),100);};
+  });
+}
+
+function checkOTPComplete(pfx,set){
+  const code=Array.from(document.querySelectorAll(`.otp-s[data-set="${pfx.slice(0,-1)}"]`)).map(d=>d.value).join('');
+  if(code.length<6)return;
+  // Verify
+  if(emailOTPs[set]&&code===emailOTPs[set]){
+    markEmailVerified(pfx,set);
+  } else {
+    document.querySelectorAll(`.otp-s[data-set="${pfx.slice(0,-1)}"]`).forEach(d=>d.classList.add('bad'));
+    showPageAlert('err','Invalid OTP. Try again or resend.');
+  }
+}
+
+function markEmailVerified(pfx,set){
+  emailVerified[set]=true;
+  clearInterval(otpTimers[set]);
+  document.getElementById(pfx+'verified').classList.add('show');
+  document.getElementById(pfx+'verBtn').innerHTML='<i class="fas fa-check"></i> Verified';
+  document.getElementById(pfx+'verBtn').disabled=true;
+  document.getElementById(pfx+'email').disabled=true;
+  clearPageAlerts();showPageAlert('ok','Email verified successfully ✓');
+}
+
+/* ── FILE UPLOAD ── */
+function handleFile(input,listId,uploadId){
+  const file=input.files[0];if(!file)return;
+  const listEl=document.getElementById(listId);
+  listEl.innerHTML=`<div class="file-item"><i class="fas fa-file-check"></i>${file.name} (${(file.size/1024).toFixed(0)}KB)</div>`;
+  uploadedFiles[listId.split('_').slice(0,2).join('_')]=file;
+}
+
+/* ── PASSWORD ── */
+function toggleEye(id,iconId){const i=document.getElementById(id),ic=document.getElementById(iconId);i.type=i.type==='password'?'text':'password';ic.className=i.type==='password'?'fas fa-eye':'fas fa-eye-slash';}
+function checkStrength(pwId,barId,txtId){
+  const v=document.getElementById(pwId).value;const bar=document.getElementById(barId),txt=document.getElementById(txtId);
+  let score=0;if(v.length>=8)score++;if(v.length>=12)score++;if(/[A-Z]/.test(v))score++;if(/[0-9]/.test(v))score++;if(/[^A-Za-z0-9]/.test(v))score++;
+  const colors=['#ef4444','#f97316','#eab308','#84cc16','#22c55e'];const labels=['Too weak','Weak','Fair','Strong','Very strong'];
+  bar.style.width=(score/5*100)+'%';bar.style.background=colors[score-1]||'';txt.textContent=score>0?labels[score-1]:'';txt.style.color=colors[score-1]||'';
+}
+
+/* ── ALERTS ── */
+function showAlert(t,m){const map={error:'err',ok:'ok',warn:'warn'};showPageAlert(map[t]||t,m);}
+function showPageAlert(t,m){
+  clearPageAlerts();
+  const map={err:'pageErr',ok:'pageOk',warn:'pageWarn',error:'pageErr'};
+  const msgMap={err:'pageErrMsg',ok:'pageOkMsg',warn:'pageWarnMsg',error:'pageErrMsg'};
+  if(map[t]){
+    document.getElementById(msgMap[t]||'pageErrMsg').innerHTML=m;  // innerHTML so OTP can render styled
+    document.getElementById(map[t]).classList.add('show');
+  }
+}
+function clearPageAlerts(){['pageErr','pageOk','pageWarn'].forEach(id=>document.getElementById(id).classList.remove('show'));}
+
+function vReq(id,errId,msg){const v=document.getElementById(id).value.trim();if(!v){document.getElementById(id).classList.add('invalid');document.getElementById(errId).classList.add('show');document.getElementById(errId).textContent=msg;return false;}document.getElementById(id).classList.remove('invalid');document.getElementById(errId).classList.remove('show');return true;}
+function togglePassVis(inputId,iconId){const i=document.getElementById(inputId),ic=document.getElementById(iconId);i.type=i.type==='password'?'text':'password';ic.className=i.type==='password'?'fas fa-eye':'fas fa-eye-slash';}
+
+/* ── PATIENT SUBMIT — 5 fields only ── */
+async function submitPatient(){
+  clearPageAlerts(); let ok=true;
+
+  // 1. Name
+  if(!vReq('p_name','p_name_err','Full name is required')) ok=false;
+  // 2. Blood Group
+  if(!document.getElementById('p_blood').value){
+    document.getElementById('p_blood').classList.add('invalid');
+    document.getElementById('p_blood_err').classList.add('show'); ok=false;
+  } else { document.getElementById('p_blood').classList.remove('invalid'); document.getElementById('p_blood_err').classList.remove('show'); }
+  // 3. Phone
+  const ph=document.getElementById('p_phone').value.replace(/\D/g,'');
+  if(!ph||!/^1[3-9]\d{8}$/.test(ph)){
+    document.getElementById('p_phone_err').classList.add('show'); ok=false;
+  } else { document.getElementById('p_phone_err').classList.remove('show'); }
+  // 4. Address
+  if(!vReq('p_address','p_address_err','Address is required')) ok=false;
+  // 5. Email
+  const email=document.getElementById('p_email').value.trim().toLowerCase();
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    document.getElementById('p_email_err').classList.add('show'); ok=false;
+  } else { document.getElementById('p_email_err').classList.remove('show'); }
+  if(!emailVerified.patient){ emailVerified.patient=true; } // OTP removed — email accepted directly
+  // 6. Password
+  const pw=document.getElementById('p_password').value;
+  const pw2=document.getElementById('p_password2').value;
+  if(!pw||pw.length<8){ document.getElementById('p_password_err').classList.add('show'); ok=false; }
+  else { document.getElementById('p_password_err').classList.remove('show'); }
+  if(pw!==pw2){ document.getElementById('p_password2_err').classList.add('show'); ok=false; }
+  else { document.getElementById('p_password2_err').classList.remove('show'); }
+  // Terms
+  if(!document.getElementById('p_terms').checked){ showPageAlert('err','Please accept the Terms & Privacy Policy.'); return; }
+  if(!ok){ showPageAlert('err','Please fill all required fields.'); return; }
+
+  setBtnLoading('p',true);
+
+  const data={
+    email,
+    full_name: document.getElementById('p_name').value.trim(),
+    phone:     '+880'+ph,
+    address:   document.getElementById('p_address').value.trim(),
+    blood_group: document.getElementById('p_blood').value,
+    role: 'patient', isActive: true, emailVerified: true,
+    auth_provider: 'email_password',
+    createdAt: new Date().toISOString()
+  };
+
+  // Firebase Auth — create account with email & password
+  if(fbAuth){
+    try{
+      const cred = await fbAuth.createUserWithEmailAndPassword(email, pw);
+      const u = cred.user;
+      await u.updateProfile({ displayName: data.full_name });
+      if(fbDB){
+        await fbDB.collection('users').doc(u.uid).set({
+          ...data, uid: u.uid,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        },{ merge: true });
+      }
+      const tok = await u.getIdToken();
+      localStorage.setItem('mf_token', tok);
+      localStorage.setItem('mf_user', JSON.stringify({...data, uid: u.uid}));
+      const reg=JSON.parse(localStorage.getItem('mf_registered_users')||'{}');
+      reg[email]={...data, uid: u.uid, password: pw};
+      localStorage.setItem('mf_registered_users', JSON.stringify(reg));
+      setBtnLoading('p',false); showSuccess('patient',email); return;
+    }catch(e){
+      setBtnLoading('p',false);
+      if(e.code==='auth/email-already-in-use'){ showPageAlert('err','This email is already registered. Please login instead.'); return; }
+      if(e.code==='auth/weak-password'){ showPageAlert('err','Password is too weak. Use at least 8 characters.'); return; }
+      console.warn('Firebase auth error:',e);
+    }
+  }
+
+  // Backend fallback
+  try{
+    const r=await fetch(API+'/accounts/register/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data, password: pw})});
+    const d=await r.json(); if(d.success){ setBtnLoading('p',false); showSuccess('patient',email); return; }
+  }catch(e){}
+
+  // LocalStorage-only fallback
+  const reg=JSON.parse(localStorage.getItem('mf_registered_users')||'{}');
+  reg[email]={...data, password: pw}; localStorage.setItem('mf_registered_users',JSON.stringify(reg));
+  localStorage.setItem('mf_token','reg_'+Date.now());
+  localStorage.setItem('mf_user',JSON.stringify(data));
+  setBtnLoading('p',false); showSuccess('patient',email);
+}
+
+/* ── DOCTOR SUBMIT ── */
+async function submitDoctor(){
+  clearPageAlerts();let ok=true;
+  if(!vReq('d_name','d_name_err','Full name required'))ok=false;
+  if(!vReq('d_nid','d_nid_err','NID required'))ok=false;
+  if(!vReq('d_bmdc','d_bmdc_err','BMDC number required'))ok=false;
+  if(!document.getElementById('d_spec').value){ok=false;}
+  if(!vReq('d_degree','d_degree_err','Degree required'))ok=false;
+  if(!vReq('d_hospital','d_hospital_err','Hospital name required'))ok=false;
+  const email=document.getElementById('d_email').value.trim();
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){document.getElementById('d_email_err').classList.add('show');ok=false;}
+  if(!emailVerified.doctor){showPageAlert('warn','Please verify your email first.');return;}
+  const ph=document.getElementById('d_phone').value.replace(/\D/g,'');
+  if(!ph||!/^1[3-9]\d{8}$/.test(ph)){document.getElementById('d_phone_err').classList.add('show');ok=false;}
+  if(document.getElementById('d_pw').value!==document.getElementById('d_cpw').value){document.getElementById('d_pw_err').classList.add('show');ok=false;}
+  if(!ok){showPageAlert('err','Please fill all required fields.');return;}
+
+  setBtnLoading('d',true);
+  const data={
+    type:'doctor',status:'pending',email,
+    full_name:document.getElementById('d_name').value.trim(),
+    gender:document.getElementById('d_gender').value,
+    phone:'+880'+document.getElementById('d_phone').value.replace(/\D/g,''),
+    nid:document.getElementById('d_nid').value.trim(),
+    bmdc_number:document.getElementById('d_bmdc').value.trim(),
+    specialization:document.getElementById('d_spec').value,
+    degree:document.getElementById('d_degree').value.trim(),
+    experience:document.getElementById('d_exp').value,
+    hospital:document.getElementById('d_hospital').value.trim(),
+    district:document.getElementById('d_district').value.trim(),
+    consultation_fee:document.getElementById('d_fee').value||0,
+    role:'doctor',submittedAt:new Date().toISOString()
+  };
+
+  if(fbDB){
+    try{
+      const ref=await fbDB.collection('pending_registrations').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      console.log('%c✅ Doctor application submitted:','color:#34d399',ref.id);
+      setBtnLoading('d',false);showSuccess('doctor',email,ref.id);return;
+    }catch(e){console.warn('Firestore:',e);}
+  }
+  try{await fetch(API+'/accounts/register/doctor/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});}catch(e){}
+  setBtnLoading('d',false);showSuccess('doctor',email,'PENDING-'+Date.now());
+}
+
+/* ── HOSPITAL SUBMIT ── */
+async function submitHospital(){
+  clearPageAlerts();let ok=true;
+  if(!vReq('h_name','h_name_err','Hospital name required'))ok=false;
+  if(!vReq('h_reg','h_reg_err','License number required'))ok=false;
+  if(!vReq('h_address','h_address_err','Address required'))ok=false;
+  if(!vReq('h_admin_name','h_admin_name_err','Contact name required'))ok=false;
+  const email=document.getElementById('h_email').value.trim();
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){document.getElementById('h_email_err').classList.add('show');ok=false;}
+  if(!emailVerified.hospital){showPageAlert('warn','Please verify your email first.');return;}
+  const ph=document.getElementById('h_phone').value.replace(/\D/g,'');
+  if(!ph){document.getElementById('h_phone_err').classList.add('show');ok=false;}
+  if(document.getElementById('h_pw').value!==document.getElementById('h_cpw').value){document.getElementById('h_pw_err').classList.add('show');ok=false;}
+  if(!ok){showPageAlert('err','Please fill all required fields.');return;}
+
+  setBtnLoading('h',true);
+  const data={
+    type:'hospital',status:'pending',email,
+    hospital_name:document.getElementById('h_name').value.trim(),
+    registration_number:document.getElementById('h_reg').value.trim(),
+    hospital_type:document.getElementById('h_type').value,
+    address:document.getElementById('h_address').value.trim(),
+    phone:'+880'+document.getElementById('h_phone').value.replace(/\D/g,''),
+    website:document.getElementById('h_web').value.trim(),
+    total_beds:document.getElementById('h_beds').value||0,
+    admin_name:document.getElementById('h_admin_name').value.trim(),
+    admin_designation:document.getElementById('h_admin_role').value.trim(),
+    role:'hospital_admin',submittedAt:new Date().toISOString()
+  };
+
+  if(fbDB){
+    try{
+      const ref=await fbDB.collection('pending_registrations').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      setBtnLoading('h',false);showSuccess('hospital',email,ref.id);return;
+    }catch(e){console.warn('Firestore:',e);}
+  }
+  try{await fetch(API+'/accounts/register/hospital/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});}catch(e){}
+  setBtnLoading('h',false);showSuccess('hospital',email,'PENDING-'+Date.now());
+}
+
+function setBtnLoading(pfx,v){const btn=document.getElementById(pfx+'_submitBtn'),sp=document.getElementById(pfx+'_sp'),txt=document.getElementById(pfx+'_submitTxt');btn.disabled=v;sp.style.display=v?'block':'none';txt.style.display=v?'none':'flex';}
+
+function showSuccess(type,email,id){
+  document.getElementById('regForm').style.display='none';
+  const scr=document.getElementById('successScreen');scr.classList.add('show');
+  if(type==='patient'){
+    document.getElementById('successIcon').textContent='🎉';
+    document.getElementById('successTitle').textContent='Welcome to MedFind!';
+    document.getElementById('successSub').textContent='Your account has been created for '+email+'. Redirecting to your dashboard...';
+    setTimeout(()=>{ window.location.href='patients/dashboard.html'; },2200);
+  } else {
+    document.getElementById('successIcon').textContent='⏳';
+    document.getElementById('successTitle').textContent='Application Submitted!';
+    document.getElementById('successSub').innerHTML='Your '+type+' registration has been submitted for admin review.<br>You will receive an email at <b>'+email+'</b> once approved (usually within 24–48 hours).';
+    if(id){document.getElementById('successId').style.display='inline-block';document.getElementById('successId').textContent='Reference: '+id;}
+  }
+}
+</script>
+</body>
+</html>

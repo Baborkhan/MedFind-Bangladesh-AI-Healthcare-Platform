@@ -1,0 +1,97 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "hosting": {
+    "public": "frontend",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "cleanUrls": false,
+    "redirects": [
+      {
+        "source": "/login",
+        "destination": "/pages/login.html",
+        "type": 301
+      },
+      {
+        "source": "/register",
+        "destination": "/pages/register.html",
+        "type": 301
+      },
+      {
+        "source": "/donate",
+        "destination": "/pages/donate/index.html",
+        "type": 301
+      },
+      {
+        "source": "/doctors",
+        "destination": "/pages/doctors/search.html",
+        "type": 301
+      },
+      {
+        "source": "/blood",
+        "destination": "/pages/blood-donor/search.html",
+        "type": 301
+      },
+      {
+        "source": "/symptoms",
+        "destination": "/pages/symptoms/index.html",
+        "type": 301
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=604800"
+          }
+        ]
+      },
+      {
+        "source": "**/*.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Frame-Options",
+            "value": "SAMEORIGIN"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
+          },
+          {
+            "key": "Strict-Transport-Security",
+            "value": "max-age=31536000; includeSubDomains"
+          },
+          {
+            "key": "Permissions-Policy",
+            "value": "geolocation=(), camera=(), microphone=()"
+          },
+          {
+            "key": "X-XSS-Protection",
+            "value": "1; mode=block"
+          }
+        ]
+      }
+    ],
+    "404": "/404.html"
+  }
+}
