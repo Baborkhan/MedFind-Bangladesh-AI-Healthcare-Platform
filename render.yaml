@@ -1,0 +1,101 @@
+# ═══════════════════════════════════════════════════════════
+#  MedFind Bangladesh — Render.com Auto-Deploy Config v3
+#  Backend: Django → Gunicorn → medfind_project.settings_render
+# ═══════════════════════════════════════════════════════════
+services:
+  - type: web
+    name: medfind-backend
+    runtime: python
+    rootDir: backend
+    autoDeploy: true
+
+    buildCommand: >
+      pip install -r requirements_render.txt &&
+      python manage.py migrate --settings=medfind_project.settings_render --noinput &&
+      python manage.py collectstatic --settings=medfind_project.settings_render --noinput --clear
+
+    startCommand: >
+      gunicorn medfind_project.wsgi:application
+      --bind 0.0.0.0:$PORT
+      --workers 2
+      --timeout 120
+      --access-logfile -
+      --error-logfile -
+
+    healthCheckPath: /api/v1/health/
+
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: medfind_project.settings_render
+
+      - key: DEBUG
+        value: "False"
+
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com,medfind-bangladesh-ai-healthcare-platform.onrender.com,localhost,127.0.0.1"
+
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://medfind-bangladesh.web.app,https://www.medfind-bangladesh.com,https://medfind-bangladesh-ai-healthcare-platform.onrender.com,https://baborkhan.github.io"
+
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://medfind-bangladesh-ai-healthcare-platform.onrender.com,https://medfind-bangladesh.web.app,https://www.medfind-bangladesh.com,https://baborkhan.github.io"
+
+      - key: SECRET_KEY
+        generateValue: true
+
+      # ══════════════════════════════════════════════════════════
+      # ⚠️  SET THESE IN Render Dashboard → Environment Variables
+      # ══════════════════════════════════════════════════════════
+
+      # PRIMARY AI — get unrestricted key from:
+      # https://aistudio.google.com/app/apikey
+      # → Create API key → "No restrictions" (NOT "HTTP referrers")
+      - key: GEMINI_API_KEY
+        sync: false
+
+      # OPTIONAL — enables web_search tool in medfind-ai.html
+      # Get from: https://console.anthropic.com/settings/keys
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+      - key: GEMINI_MODEL
+        value: "gemini-2.0-flash-lite"
+
+      - key: ANTHROPIC_MODEL
+        value: "claude-haiku-4-5-20251001"
+
+      - key: AI_MAX_TOKENS
+        value: "1500"
+
+      # ── Email (OTP) ─────────────────────────────────────────
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+
+      # ── PostgreSQL Database ─────────────────────────────────
+      # Render-এ PostgreSQL add করো: New → PostgreSQL
+      # তারপর এই values Render Dashboard থেকে copy করো
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "5432"
+
+      # ── MongoDB Atlas (Optional) ────────────────────────────
+      # Free: https://www.mongodb.com/atlas/database
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_NAME
+        value: "medfind"
+
+      # ── Redis (WebSocket + Celery) ─────────────────────────
+      # Render-এ Redis add করো: New → Redis
+      - key: REDIS_URL
+        sync: false
+
